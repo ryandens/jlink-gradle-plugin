@@ -10,3 +10,4 @@
 
 rootProject.name = "jlink-jib"
 include("plugin")
+include("example-app")
