@@ -9,4 +9,4 @@
  */
 
 rootProject.name = "jlink-gradle-plugin"
-include("plugin")
+include("jlink-gradle")
