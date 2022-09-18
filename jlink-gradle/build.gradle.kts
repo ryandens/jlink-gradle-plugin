@@ -10,7 +10,8 @@
 plugins {
     // Apply the Java Gradle plugin development plugin to add support for developing Gradle plugins
     `java-gradle-plugin`
-
+    `maven-publish`
+    id("com.gradle.plugin-publish") version "0.20.0"
     // Apply the Kotlin JVM plugin to add support for Kotlin.
     id("org.jetbrains.kotlin.jvm") version "1.6.21"
 }
@@ -25,7 +26,7 @@ description = """
   with built-in Gradle tasks and plugins. 
 """.trimIndent()
 
-group = "com.ryandens.jlink"
+group = "com.ryandens"
 version = "0.1.0"
 
 dependencies {
