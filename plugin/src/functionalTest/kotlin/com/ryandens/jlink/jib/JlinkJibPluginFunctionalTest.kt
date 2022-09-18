@@ -4,7 +4,6 @@
 package com.ryandens.jlink.jib
 
 import java.io.File
-import java.nio.file.Files
 import kotlin.test.assertTrue
 import kotlin.test.Test
 import org.gradle.testkit.runner.GradleRunner
@@ -22,38 +21,7 @@ class JlinkJibPluginFunctionalTest {
     private fun getSettingsFile() = getProjectDir().resolve("settings.gradle")
 
     @Test fun `can run with custom jre`() {
-        // Setup the test build
-        getSettingsFile().writeText("")
-        getBuildFile().writeText("""
-plugins {
-    id('application')
-    id('com.ryandens.jlink-application-run')
-}
-
-application {
-  mainClass.set("com.ryandens.example.App")
-}
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
-}
-""")
-
-      val file = File(getProjectDir(), "src/main/java/com/ryandens/example/")
-      file.mkdirs()
-      file.resolve("App.java").writeText("""
-        package com.ryandens.example;
-        
-        public final class App {
-        
-          public static void main(final String[] args) {
-            System.out.println("Hello World");
-          }
-        
-        }
-      """.trimIndent())
+      setupProject("\"Hello World\"", "java.base")
 
         // Run the build
         val runner = GradleRunner.create()
@@ -61,9 +29,83 @@ java {
         runner.withPluginClasspath()
         runner.withArguments("run")
         runner.withProjectDir(getProjectDir())
-        runner.build();
+        val result = runner.build();
 
         // Verify the result
         assertTrue(File(getProjectDir(), "build/jlink-jre/jre/bin/java").exists())
+        assertTrue(result.output.contains("Hello World"))
     }
+
+  @Test fun `build fails when using class from module that is not included`() {
+    setupProject("java.sql.Statement.class.getName()", "java.base")
+    // Run the build
+    val runner = GradleRunner.create()
+    runner.forwardOutput()
+    runner.withPluginClasspath()
+    runner.withArguments("run")
+    runner.withProjectDir(getProjectDir())
+    val result = runner.buildAndFail();
+
+    // Verify the result
+    assertTrue(File(getProjectDir(), "build/jlink-jre/jre/bin/java").exists())
+    assertTrue(result.output.contains("java.lang.NoClassDefFoundError: java/sql/Statement"))
+  }
+
+  @Test fun `build succeeds when using class from non-default module that is included`() {
+    setupProject("java.sql.Statement.class.getName()", "java.sql")
+    // Run the build
+    val runner = GradleRunner.create()
+    runner.forwardOutput()
+    runner.withPluginClasspath()
+    runner.withArguments("run")
+    runner.withProjectDir(getProjectDir())
+    val result = runner.build();
+
+    // Verify the result
+    assertTrue(File(getProjectDir(), "build/jlink-jre/jre/bin/java").exists())
+    assertTrue(result.output.contains("java.sql.Statement"))
+  }
+
+  private fun setupProject(printlnParam: String, module: String) {
+    // Setup the test build
+    getSettingsFile().writeText("")
+    getBuildFile().writeText(
+      """
+  plugins {
+      id('application')
+      id('com.ryandens.jlink-application-run')
+  }
+  
+  application {
+    mainClass.set("com.ryandens.example.App")
+  }
+  
+  jlinkJre {
+    modules = ['$module']
+  }
+  
+  java {
+      toolchain {
+          languageVersion = JavaLanguageVersion.of(17)
+      }
+  }
+  """
+    )
+
+    val file = File(getProjectDir(), "src/main/java/com/ryandens/example/")
+    file.mkdirs()
+    file.resolve("App.java").writeText(
+      """
+          package com.ryandens.example;
+          
+          public final class App {
+          
+            public static void main(final String[] args) {
+              System.out.println($printlnParam);
+            }
+          
+          }
+        """.trimIndent()
+    )
+  }
 }
