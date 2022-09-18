@@ -20,6 +20,9 @@ repositories {
     mavenCentral()
 }
 
+group = "com.ryandens.jlink"
+version = "0.1.0"
+
 dependencies {
     // Align versions of all Kotlin components
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
@@ -58,9 +61,13 @@ testing {
 
 gradlePlugin {
     // Define the plugin
-    val greeting by plugins.creating {
-        id = "com.ryandens.jlink.jib.greeting"
-        implementationClass = "com.ryandens.jlink.jib.JlinkJibPlugin"
+    val jlinkJre by plugins.creating {
+        id = "com.ryandens.jlink-jre"
+        implementationClass = "com.ryandens.jlink.JlinkJrePlugin"
+    }
+    val jlinkApplicationRun by plugins.creating {
+      id = "com.ryandens.jlink-application-run"
+      implementationClass = "com.ryandens.jlink.JlinkJreApplicationRunPlugin"
     }
 }
 

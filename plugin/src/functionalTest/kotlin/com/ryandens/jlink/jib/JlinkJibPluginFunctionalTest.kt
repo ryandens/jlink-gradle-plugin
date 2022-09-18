@@ -21,24 +21,49 @@ class JlinkJibPluginFunctionalTest {
     private fun getBuildFile() = getProjectDir().resolve("build.gradle")
     private fun getSettingsFile() = getProjectDir().resolve("settings.gradle")
 
-    @Test fun `can run task`() {
+    @Test fun `can run with custom jre`() {
         // Setup the test build
         getSettingsFile().writeText("")
         getBuildFile().writeText("""
 plugins {
-    id('com.ryandens.jlink.jib.greeting')
+    id('application')
+    id('com.ryandens.jlink-application-run')
+}
+
+application {
+  mainClass.set("com.ryandens.example.App")
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 """)
+
+      val file = File(getProjectDir(), "src/main/java/com/ryandens/example/")
+      file.mkdirs()
+      file.resolve("App.java").writeText("""
+        package com.ryandens.example;
+        
+        public final class App {
+        
+          public static void main(final String[] args) {
+            System.out.println("Hello World");
+          }
+        
+        }
+      """.trimIndent())
 
         // Run the build
         val runner = GradleRunner.create()
         runner.forwardOutput()
         runner.withPluginClasspath()
-        runner.withArguments("greeting")
+        runner.withArguments("run")
         runner.withProjectDir(getProjectDir())
-        val result = runner.build();
+        runner.build();
 
         // Verify the result
-        assertTrue(result.output.contains("Hello from plugin 'com.ryandens.jlink.jib.greeting'"))
+        assertTrue(File(getProjectDir(), "build/jlink-jre/jre/bin/java").exists())
     }
 }

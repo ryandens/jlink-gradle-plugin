@@ -8,6 +8,5 @@
  * This project uses @Incubating APIs which are subject to change.
  */
 
-rootProject.name = "jlink-jib"
+rootProject.name = "jlink"
 include("plugin")
-include("example-app")
