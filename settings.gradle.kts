@@ -8,5 +8,5 @@
  * This project uses @Incubating APIs which are subject to change.
  */
 
-rootProject.name = "jlink"
+rootProject.name = "jlink-gradle-plugin"
 include("plugin")
