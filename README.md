@@ -104,4 +104,23 @@ tasks.named<JlinkJreTask>(JlinkJrePlugin.JLINK_JRE_TASK_NAME) {
   })
 }
 
+// the created runtime can be leveraged in other tasks by accessing its custom java launcher
+tasks.withType<JavaExec> {
+  javaLauncher.set(tasks.named<JlinkJreTask>(JlinkJrePlugin.JLINK_JRE_TASK_NAME).flatMap { it.javaLauncher })
+}
+
+// additional runtimes can be created and used in the same fashion
+val jre11 = tasks.register<JlinkJreTask>("createJre11") {
+  modules.set(listOf("java.base"))
+  javaCompiler.set(javaToolchains.compilerFor {
+    languageVersion.set(JavaLanguageVersion.of(11))
+  })
+}
+
+tasks.register<JavaExec>("runOn11") {
+  javaLauncher.set(jre11.flatMap { it.javaLauncher })
+  classpath = sourceSets["main"].runtimeClasspath
+  mainClass.set("yourMainClass")
+}
+
 ```
