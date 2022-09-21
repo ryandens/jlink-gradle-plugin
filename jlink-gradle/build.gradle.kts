@@ -75,6 +75,14 @@ gradlePlugin {
       id = "com.ryandens.jlink-application-run"
       implementationClass = "com.ryandens.jlink.JlinkJreApplicationRunPlugin"
     }
+    val jlinkApplicationDistribution by plugins.creating {
+      id = "com.ryandens.jlink-application-distribution"
+      implementationClass = "com.ryandens.jlink.JlinkJreApplicationDistributionPlugin"
+    }
+    val jlinkApplication by plugins.creating {
+      id = "com.ryandens.jlink-application"
+      implementationClass = "com.ryandens.jlink.JlinkJreApplicationPlugin"
+    }
 }
 
 gradlePlugin.testSourceSets(sourceSets["functionalTest"])

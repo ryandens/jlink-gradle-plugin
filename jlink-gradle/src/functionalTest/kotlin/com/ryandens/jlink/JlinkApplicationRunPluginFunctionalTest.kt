@@ -3,6 +3,7 @@
  */
 package com.ryandens.jlink
 
+import org.gradle.internal.jvm.Jvm
 import java.io.File
 import kotlin.test.assertTrue
 import kotlin.test.Test
@@ -66,6 +67,23 @@ class JlinkApplicationRunPluginFunctionalTest {
     assertTrue(result.output.contains("java.sql.Statement"))
   }
 
+  @Test fun `can build a distribution with a custom jre`() {
+    setupProject("\"Hello World\"", "java.instrument")
+
+    // Run the build
+    val runner = GradleRunner.create()
+    runner.forwardOutput()
+    runner.withPluginClasspath()
+    runner.withArguments("installDist", "execStartScript")
+    runner.withProjectDir(getProjectDir())
+    runner.withDebug(true)
+    val result = runner.build();
+
+    // Verify the result
+    assertTrue(File(getProjectDir(), "build/install/${getProjectDir().name}/jre/bin/java").exists())
+    result.output.contains("Hello World")
+  }
+
   private fun setupProject(printlnParam: String, module: String) {
     // Setup the test build
     getSettingsFile().writeText("")
@@ -73,7 +91,7 @@ class JlinkApplicationRunPluginFunctionalTest {
       """
   plugins {
       id('application')
-      id('com.ryandens.jlink-application-run')
+      id('com.ryandens.jlink-application')
   }
   
   application {
@@ -88,6 +106,12 @@ class JlinkApplicationRunPluginFunctionalTest {
       toolchain {
           languageVersion = JavaLanguageVersion.of(17)
       }
+  }
+  
+  task execStartScript(type: Exec) {
+    workingDir '${getProjectDir().canonicalPath}/build/install/${getProjectDir().name}/bin/'
+    commandLine './${getProjectDir().name}'
+    environment JAVA_HOME: "${getProjectDir().canonicalPath}/build/install/${getProjectDir().name}/jre/"
   }
   """
     )
