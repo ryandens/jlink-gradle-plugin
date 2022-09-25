@@ -9,6 +9,7 @@ repositories {
 
 spotless {
     kotlinGradle {
+        target("*.gradle.kts", "src/main/kotlin/*.gradle.kts")
         ktlint()
     }
 }
