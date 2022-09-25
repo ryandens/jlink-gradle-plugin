@@ -1,8 +1,5 @@
 plugins {
-  `java-gradle-plugin`
-  id("org.jetbrains.kotlin.jvm") version "1.6.21"
-  `maven-publish`
-  id("com.gradle.plugin-publish") version "0.20.0"
+  id("com.ryandens.jlink.plugin-conventions")
 }
 
 repositories {
