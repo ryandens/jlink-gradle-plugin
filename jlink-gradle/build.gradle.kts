@@ -15,14 +15,6 @@ description = """
 group = "com.ryandens"
 version = "0.1.0"
 
-dependencies {
-    // Align versions of all Kotlin components
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
-
-    // Use the Kotlin JDK 8 standard library.
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-}
-
 testing {
     suites {
         // Configure the built-in test suite

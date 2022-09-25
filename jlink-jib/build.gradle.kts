@@ -22,8 +22,6 @@ group = "com.ryandens"
 version = "0.1.0"
 
 dependencies {
-  implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
-  implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
   implementation(project(":jlink-gradle"))
   implementation("com.google.cloud.tools:jib-gradle-plugin-extension-api:0.4.0")
   implementation("com.google.cloud.tools:jib-gradle-plugin:3.3.0")
