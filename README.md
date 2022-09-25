@@ -1,5 +1,7 @@
 # jlink Gradle plugin
 
+[![Verify Build](https://github.com/ryandens/jlink-gradle-plugin/actions/workflows/build-verification.yaml/badge.svg)](https://github.com/ryandens/jlink-gradle-plugin/actions/workflows/build-verification.yaml)
+
 This repository defines a set of Gradle plugins that enable the use of [jlink](TODO) in Gradle builds. In general,
 this plugin strives to enable developers to run tasks with jlink-created JREs or build distributions with embedded jlink
 JREs. Generally, this plugin uses the provided java toolchain to locate a valid `jlink` executable and uses that to 
