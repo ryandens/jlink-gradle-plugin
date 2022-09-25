@@ -76,7 +76,6 @@ class JlinkApplicationRunPluginFunctionalTest {
     runner.withPluginClasspath()
     runner.withArguments("installDist", "execStartScript")
     runner.withProjectDir(getProjectDir())
-    runner.withDebug(true)
     val result = runner.build();
 
     // Verify the result
