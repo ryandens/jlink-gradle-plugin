@@ -5,10 +5,24 @@ plugins {
   id("com.gradle.plugin-publish")
 }
 
+repositories {
+  mavenCentral()
+  gradlePluginPortal()
+}
+
 dependencies {
   implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 }
+
+pluginBundle {
+  website = "https://www.ryandens.com"
+  vcsUrl = "https://github.com/ryandens/javaagent-gradle-plugin"
+  tags = listOf("jlink", "docker", "jib", "application")
+}
+
+group = "com.ryandens"
+version = "0.1.0"
 
 testing {
   suites {

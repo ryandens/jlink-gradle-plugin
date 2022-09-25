@@ -2,19 +2,10 @@ plugins {
   id("com.ryandens.jlink.plugin-conventions")
 }
 
-repositories {
-    // Use Maven Central for resolving dependencies.
-    mavenCentral()
-}
-
 description = """
   A set of Gradle plugins for leveraging the jlink tool provided by the JDK and integrating it 
   with built-in Gradle tasks and plugins. 
 """.trimIndent()
-
-group = "com.ryandens"
-version = "0.1.0"
-
 
 gradlePlugin {
     // Define the plugin
