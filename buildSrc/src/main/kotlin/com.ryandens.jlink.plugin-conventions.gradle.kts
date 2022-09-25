@@ -3,6 +3,7 @@ plugins {
   id("org.jetbrains.kotlin.jvm")
   `maven-publish`
   id("com.gradle.plugin-publish")
+  id("com.diffplug.spotless")
 }
 
 repositories {
