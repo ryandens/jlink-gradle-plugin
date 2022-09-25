@@ -38,7 +38,7 @@ class JlinkApplicationRunPluginFunctionalTest {
     }
 
   @Test fun `build fails when using class from module that is not included`() {
-    setupProject("java.sql.Statement.class.getName()", "java.base")
+      setupProject("java.sql.Statement.class.getName()", "java.base")
     // Run the build
     val runner = GradleRunner.create()
     runner.forwardOutput()
@@ -67,8 +67,8 @@ class JlinkApplicationRunPluginFunctionalTest {
     assertTrue(result.output.contains("java.sql.Statement"))
   }
 
-  @Test fun `can build a distribution with a custom jre`() {
-    setupProject("\"Hello World\"", "java.instrument")
+  @Test fun `build succeeds for distribution when using class from module that is not included`() {
+    setupProject("java.sql.Statement.class.getName()", "java.sql")
 
     // Run the build
     val runner = GradleRunner.create()
@@ -80,7 +80,23 @@ class JlinkApplicationRunPluginFunctionalTest {
 
     // Verify the result
     assertTrue(File(getProjectDir(), "build/install/${getProjectDir().name}/jre/bin/java").exists())
-    result.output.contains("Hello World")
+    assertTrue(result.output.contains("java.sql.Statement"))
+  }
+
+  @Test fun `build fails for distribution when using class from module that is not included`() {
+    setupProject("java.sql.Statement.class.getName()", "java.base")
+
+    // Run the build
+    val runner = GradleRunner.create()
+    runner.forwardOutput()
+    runner.withPluginClasspath()
+    runner.withArguments("installDist", "execStartScript")
+    runner.withProjectDir(getProjectDir())
+    val result = runner.buildAndFail();
+
+    // Verify the result
+    assertTrue(File(getProjectDir(), "build/install/${getProjectDir().name}/jre/bin/java").exists())
+    assertTrue(result.output.contains("java.lang.NoClassDefFoundError: java/sql/Statement"))
   }
 
   private fun setupProject(printlnParam: String, module: String) {
@@ -110,7 +126,6 @@ class JlinkApplicationRunPluginFunctionalTest {
   task execStartScript(type: Exec) {
     workingDir '${getProjectDir().canonicalPath}/build/install/${getProjectDir().name}/bin/'
     commandLine './${getProjectDir().name}'
-    environment JAVA_HOME: "${getProjectDir().canonicalPath}/build/install/${getProjectDir().name}/jre/"
   }
   """
     )
