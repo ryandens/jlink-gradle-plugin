@@ -1,5 +1,5 @@
 plugins {
-  id("com.ryandens.jlink.plugin-conventions")
+    id("com.ryandens.jlink.plugin-conventions")
 }
 
 description = """
@@ -7,15 +7,15 @@ description = """
 """.trimIndent()
 
 dependencies {
-  implementation(project(":jlink-gradle"))
-  implementation("com.google.cloud.tools:jib-gradle-plugin-extension-api:0.4.0")
-  implementation("com.google.cloud.tools:jib-gradle-plugin:3.3.0")
+    implementation(project(":jlink-gradle"))
+    implementation("com.google.cloud.tools:jib-gradle-plugin-extension-api:0.4.0")
+    implementation("com.google.cloud.tools:jib-gradle-plugin:3.3.0")
 }
 
 gradlePlugin {
-  // Define the plugin
-  val jlinkJib by plugins.creating {
-    id = "com.ryandens.jlink-jib"
-    implementationClass = "com.ryandens.jlink.jib.JlinkJibPlugin"
-  }
+    // Define the plugin
+    val jlinkJib by plugins.creating {
+        id = "com.ryandens.jlink-jib"
+        implementationClass = "com.ryandens.jlink.jib.JlinkJibPlugin"
+    }
 }

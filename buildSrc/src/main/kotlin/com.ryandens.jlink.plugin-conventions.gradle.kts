@@ -29,6 +29,9 @@ spotless {
   kotlin {
     ktlint()
   }
+  kotlinGradle {
+    ktlint()
+  }
 }
 
 testing {
