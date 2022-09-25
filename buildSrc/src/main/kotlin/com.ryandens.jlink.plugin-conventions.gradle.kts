@@ -25,6 +25,12 @@ pluginBundle {
 group = "com.ryandens"
 version = "0.1.0"
 
+spotless {
+  kotlin {
+    ktlint()
+  }
+}
+
 testing {
   suites {
     // Configure the built-in test suite
