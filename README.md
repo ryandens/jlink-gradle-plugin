@@ -13,10 +13,16 @@ This Gradle plugin tightly integrates with the [Gradle application plugin](https
 to make running applications via Gradle with jlink-created JREs easy and modifying distributions created by the application
 plugin to automatically use a jlink JRE rather than a user provided JRE.
 
+This plugin applies the `com.ryandens.jlink-application-run`, which configures the `run` task to launch the java process
+using the java launcher created by the `com.ryandens.jlink-jre`. In addition, it applies the 
+`com.ryandens.jlink-application-distribution` plugin which modifies the main distribution to include the custom runtime
+built by `com.ryandens.jlink-jre`. In addition, it replaces the application start script with one that uses the built-in
+jlink java binary rather than the java binary discovered relative on the host.
+
 ```kotlin
 plugins {
   application
-  id("com.ryandens.jlink-application-run") version "0.1.0"
+  id("com.ryandens.jlink-application") version "0.1.0"
 }
 
 java {
