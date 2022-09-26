@@ -5,10 +5,11 @@
 [![jlink Jib Plugin](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/com.ryandens/jlink-jib/maven-metadata.xml.svg?label=Jlink%20Jib%20Plugin)](https://plugins.gradle.org/plugin/com.ryandens.jlink-jib)
 
 
-This repository defines a set of Gradle plugins that enable the use of [jlink](TODO) in Gradle builds. In general,
-this plugin strives to enable developers to run tasks with jlink-created JREs or build distributions with embedded jlink
-JREs. Generally, this plugin uses the provided java toolchain to locate a valid `jlink` executable and uses that to 
-create a minimal java runtime for your application. This enables smaller, more secure, application distributions. 
+This repository defines a set of Gradle plugins that enable the use of 
+[jlink](https://docs.oracle.com/javase/9/tools/jlink.htm) in Gradle builds. In general, this plugin strives to enable 
+developers to run tasks with jlink-created JREs or build distributions with embedded jlink JREs. Generally, this plugin 
+uses the provided java toolchain to locate a valid `jlink` executable and uses that to create a minimal java runtime for 
+your application. This enables smaller, more secure, application distributions. 
 
 ## Jlink Application plugin usage
 
