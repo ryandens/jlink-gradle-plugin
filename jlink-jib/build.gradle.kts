@@ -19,5 +19,6 @@ gradlePlugin {
         id = "com.ryandens.jlink-jib"
         implementationClass = "com.ryandens.jlink.jib.JlinkJibPlugin"
         displayName = "jlink jib plugin"
+        description = "Modifies container images to use a minimal java runtime built with jlink."
     }
 }
