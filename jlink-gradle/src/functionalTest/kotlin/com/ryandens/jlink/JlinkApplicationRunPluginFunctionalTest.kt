@@ -107,6 +107,32 @@ class JlinkApplicationRunPluginFunctionalTest {
         assertTrue(result.output.contains("java.sql.Statement"))
     }
 
+    @Test fun `can run distribution with custom jre and configuration cache`() {
+        setupProject("java.sql.Statement.class.getName()", "java.sql")
+
+        // Run the build
+        val runner = GradleRunner.create()
+        runner.forwardOutput()
+        runner.withPluginClasspath()
+        runner.withArguments("--configuration-cache", "installDist", "execStartScript")
+        runner.withProjectDir(projectDir)
+        val result = runner.build()
+
+        // Verify the result
+        assertTrue(File(projectDir, "build/install/${projectDir.name}/jre/bin/java").exists())
+        assertTrue(result.output.contains("java.sql.Statement"))
+        assertTrue(result.output.contains("Configuration cache entry stored."))
+
+        val ccResult = GradleRunner.create()
+            .forwardOutput()
+            .withPluginClasspath()
+            .withArguments("--configuration-cache", "installDist", "execStartScript")
+            .withProjectDir(projectDir).build()
+
+        // verify the configuration cache is used
+        assertTrue(ccResult.output.contains("Reusing configuration cache."))
+    }
+
     @Test fun `build fails for distribution when using class from module that is not included`() {
         setupProject("java.sql.Statement.class.getName()", "java.base")
 
