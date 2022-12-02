@@ -91,7 +91,7 @@ class JlinkApplicationRunPluginFunctionalTest {
         assertTrue(result.output.contains("java.sql.Statement"))
     }
 
-    @Test fun `build succeeds for distribution when using class from module that is not included`() {
+    @Test fun `build succeeds for distribution when using class from module that is included`() {
         setupProject("java.sql.Statement.class.getName()", "java.sql")
 
         // Run the build
