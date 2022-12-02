@@ -3,8 +3,7 @@ package com.ryandens.jlink.jib
 import org.gradle.internal.impldep.org.apache.commons.compress.archivers.ArchiveStreamFactory
 import org.gradle.internal.impldep.org.apache.commons.compress.archivers.tar.TarArchiveEntry
 import org.gradle.testkit.runner.GradleRunner
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.io.FileInputStream
 import kotlin.test.Test
@@ -14,11 +13,11 @@ import kotlin.test.assertTrue
  * A simple functional test for the 'com.ryandens.jlink-application-run' plugin.
  */
 class JlinkJibFunctionalTest {
-    @get:Rule val tempFolder = TemporaryFolder()
+    @field:TempDir
+    lateinit var projectDir: File
 
-    private fun getProjectDir() = tempFolder.root
-    private fun getBuildFile() = getProjectDir().resolve("build.gradle")
-    private fun getSettingsFile() = getProjectDir().resolve("settings.gradle")
+    private val buildFile by lazy { projectDir.resolve("build.gradle") }
+    private val settingsFile by lazy { projectDir.resolve("settings.gradle") }
 
     @Test fun `can build image with custom jre`() {
         setupProject("\"Hello World\"", "java.base")
@@ -28,15 +27,15 @@ class JlinkJibFunctionalTest {
         runner.forwardOutput()
         runner.withPluginClasspath()
         runner.withArguments("jibBuildTar")
-        runner.withProjectDir(getProjectDir())
+        runner.withProjectDir(projectDir)
         val result = runner.build()
 
         // Verify the result
-        assertTrue(File(getProjectDir(), "build/jlink-jre/jre/bin/java").exists())
+        assertTrue(File(projectDir, "build/jlink-jre/jre/bin/java").exists())
         assertTrue(result.output.contains("Running extension: com.ryandens.jlink.jib.JlinkJibPlugin"))
-        assertTrue(File(getProjectDir(), "build/jib-image.tar").exists())
+        assertTrue(File(projectDir, "build/jib-image.tar").exists())
 
-        FileInputStream(File(getProjectDir(), "build/jib-image.tar")).use { fis ->
+        FileInputStream(File(projectDir, "build/jib-image.tar")).use { fis ->
             ArchiveStreamFactory().createArchiveInputStream("tar", fis).use { ais ->
                 var entry = ais.nextEntry as TarArchiveEntry?
                 while (entry != null) {
@@ -53,8 +52,8 @@ class JlinkJibFunctionalTest {
 
     private fun setupProject(printlnParam: String, module: String) {
         // Setup the test build
-        getSettingsFile().writeText("")
-        getBuildFile().writeText(
+        settingsFile.writeText("")
+        buildFile.writeText(
             """
    plugins {
       id('application')
@@ -82,7 +81,7 @@ class JlinkJibFunctionalTest {
   """
         )
 
-        val file = File(getProjectDir(), "src/main/java/com/ryandens/example/")
+        val file = File(projectDir, "src/main/java/com/ryandens/example/")
         file.mkdirs()
         file.resolve("App.java").writeText(
             """

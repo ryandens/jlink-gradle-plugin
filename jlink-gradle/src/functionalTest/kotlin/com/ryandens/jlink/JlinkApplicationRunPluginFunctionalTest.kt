@@ -4,8 +4,7 @@
 package com.ryandens.jlink
 
 import org.gradle.testkit.runner.GradleRunner
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -14,11 +13,11 @@ import kotlin.test.assertTrue
  * A simple functional test for the 'com.ryandens.jlink-application-run' plugin.
  */
 class JlinkApplicationRunPluginFunctionalTest {
-    @get:Rule val tempFolder = TemporaryFolder()
+    @field:TempDir
+    lateinit var projectDir: File
 
-    private fun getProjectDir() = tempFolder.root
-    private fun getBuildFile() = getProjectDir().resolve("build.gradle")
-    private fun getSettingsFile() = getProjectDir().resolve("settings.gradle")
+    private val buildFile by lazy { projectDir.resolve("build.gradle") }
+    private val settingsFile by lazy { projectDir.resolve("settings.gradle") }
 
     @Test fun `can run with custom jre`() {
         setupProject("\"Hello World\"", "java.base")
@@ -28,11 +27,11 @@ class JlinkApplicationRunPluginFunctionalTest {
         runner.forwardOutput()
         runner.withPluginClasspath()
         runner.withArguments("run")
-        runner.withProjectDir(getProjectDir())
+        runner.withProjectDir(projectDir)
         val result = runner.build()
 
         // Verify the result
-        assertTrue(File(getProjectDir(), "build/jlink-jre/jre/bin/java").exists())
+        assertTrue(File(projectDir, "build/jlink-jre/jre/bin/java").exists())
         assertTrue(result.output.contains("Hello World"))
     }
 
@@ -43,11 +42,11 @@ class JlinkApplicationRunPluginFunctionalTest {
         runner.forwardOutput()
         runner.withPluginClasspath()
         runner.withArguments("run")
-        runner.withProjectDir(getProjectDir())
+        runner.withProjectDir(projectDir)
         val result = runner.buildAndFail()
 
         // Verify the result
-        assertTrue(File(getProjectDir(), "build/jlink-jre/jre/bin/java").exists())
+        assertTrue(File(projectDir, "build/jlink-jre/jre/bin/java").exists())
         assertTrue(result.output.contains("java.lang.NoClassDefFoundError: java/sql/Statement"))
     }
 
@@ -58,11 +57,11 @@ class JlinkApplicationRunPluginFunctionalTest {
         runner.forwardOutput()
         runner.withPluginClasspath()
         runner.withArguments("run")
-        runner.withProjectDir(getProjectDir())
+        runner.withProjectDir(projectDir)
         val result = runner.build()
 
         // Verify the result
-        assertTrue(File(getProjectDir(), "build/jlink-jre/jre/bin/java").exists())
+        assertTrue(File(projectDir, "build/jlink-jre/jre/bin/java").exists())
         assertTrue(result.output.contains("java.sql.Statement"))
     }
 
@@ -74,11 +73,11 @@ class JlinkApplicationRunPluginFunctionalTest {
         runner.forwardOutput()
         runner.withPluginClasspath()
         runner.withArguments("installDist", "execStartScript")
-        runner.withProjectDir(getProjectDir())
+        runner.withProjectDir(projectDir)
         val result = runner.build()
 
         // Verify the result
-        assertTrue(File(getProjectDir(), "build/install/${getProjectDir().name}/jre/bin/java").exists())
+        assertTrue(File(projectDir, "build/install/${projectDir.name}/jre/bin/java").exists())
         assertTrue(result.output.contains("java.sql.Statement"))
     }
 
@@ -90,18 +89,18 @@ class JlinkApplicationRunPluginFunctionalTest {
         runner.forwardOutput()
         runner.withPluginClasspath()
         runner.withArguments("installDist", "execStartScript")
-        runner.withProjectDir(getProjectDir())
+        runner.withProjectDir(projectDir)
         val result = runner.buildAndFail()
 
         // Verify the result
-        assertTrue(File(getProjectDir(), "build/install/${getProjectDir().name}/jre/bin/java").exists())
+        assertTrue(File(projectDir, "build/install/${projectDir.name}/jre/bin/java").exists())
         assertTrue(result.output.contains("java.lang.NoClassDefFoundError: java/sql/Statement"))
     }
 
     private fun setupProject(printlnParam: String, module: String) {
         // Setup the test build
-        getSettingsFile().writeText("")
-        getBuildFile().writeText(
+        settingsFile.writeText("")
+        buildFile.writeText(
             """
   plugins {
       id('application')
@@ -123,13 +122,13 @@ class JlinkApplicationRunPluginFunctionalTest {
   }
   
   task execStartScript(type: Exec) {
-    workingDir '${getProjectDir().canonicalPath}/build/install/${getProjectDir().name}/bin/'
-    commandLine './${getProjectDir().name}'
+    workingDir '${projectDir.canonicalPath}/build/install/${projectDir.name}/bin/'
+    commandLine './${projectDir.name}'
   }
   """
         )
 
-        val file = File(getProjectDir(), "src/main/java/com/ryandens/example/")
+        val file = File(projectDir, "src/main/java/com/ryandens/example/")
         file.mkdirs()
         file.resolve("App.java").writeText(
             """
