@@ -56,7 +56,7 @@ testing {
 
             dependencies {
                 // functionalTest test suite depends on the production code in tests
-                implementation(project)
+                implementation(project())
             }
 
             targets {
