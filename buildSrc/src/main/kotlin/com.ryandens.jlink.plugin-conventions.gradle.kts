@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     `java-gradle-plugin`
     id("org.jetbrains.kotlin.jvm")
@@ -13,8 +15,16 @@ repositories {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(18))
+        languageVersion.set(JavaLanguageVersion.of(19))
     }
+}
+
+tasks.withType<JavaCompile> {
+    options.release.set(11)
+}
+
+tasks.withType<KotlinCompile> {
+    this.kotlinOptions.jvmTarget = "11"
 }
 
 dependencies {
