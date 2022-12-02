@@ -26,7 +26,7 @@ jlink java binary rather than the java binary discovered relative on the host.
 ```kotlin
 plugins {
   application
-  id("com.ryandens.jlink-application") version "0.1.0"
+  id("com.ryandens.jlink-application") version "0.2.0"
 }
 
 java {
@@ -59,7 +59,7 @@ the path. You must provide an image sha256 for the `java-base` container image y
 ```kotlin
 plugins {
   application
-  id("com.ryandens.jlink-jib") version "0.1.0"
+  id("com.ryandens.jlink-jib") version "0.2.0"
 }
 
 java {
@@ -96,7 +96,7 @@ build directory of the project.
 ```kotlin
 plugins {
   java
-  id("com.ryandens.jlink-jre") version "0.1.0"
+  id("com.ryandens.jlink-jre") version "0.2.0"
 }
 
 java {
