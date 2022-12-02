@@ -35,6 +35,32 @@ class JlinkApplicationRunPluginFunctionalTest {
         assertTrue(result.output.contains("Hello World"))
     }
 
+    @Test fun `can run with custom jre and configuration cache`() {
+        setupProject("\"Hello World\"", "java.base")
+
+        // Run the build
+        val runner = GradleRunner.create()
+        runner.forwardOutput()
+        runner.withPluginClasspath()
+        runner.withArguments("--configuration-cache", "run")
+        runner.withProjectDir(projectDir)
+        val result = runner.build()
+
+        // Verify the result
+        assertTrue(File(projectDir, "build/jlink-jre/jre/bin/java").exists())
+        assertTrue(result.output.contains("Hello World"))
+        assertTrue(result.output.contains("Configuration cache entry stored."))
+
+        val ccResult = GradleRunner.create()
+            .forwardOutput()
+            .withPluginClasspath()
+            .withArguments("--configuration-cache", "run")
+            .withProjectDir(projectDir).build()
+
+        // verify the configuration cache is used
+        assertTrue(ccResult.output.contains("Reusing configuration cache."))
+    }
+
     @Test fun `build fails when using class from module that is not included`() {
         setupProject("java.sql.Statement.class.getName()", "java.base")
         // Run the build
