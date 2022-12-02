@@ -1,6 +1,6 @@
 # jlink Gradle plugin
 
-[![Verify Build](https://github.com/ryandens/jlink-gradle-plugin/actions/workflows/build-verification.yaml/badge.svg)](https://github.com/ryandens/jlink-gradle-plugin/actions/workflows/build-verification.yaml)
+[![Verify Build](https://github.com/ryandens/jlink-gradle-plugin/actions/workflows/gradle.yml/badge.svg)](https://github.com/ryandens/jlink-gradle-plugin/actions/workflows/gradle.yml)
 [![jlink Application Plugin](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/com.ryandens/jlink-gradle/maven-metadata.xml.svg?label=Jlink%20Application%20Plugin)](https://plugins.gradle.org/plugin/com.ryandens.jlink-application)
 [![jlink Jib Plugin](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/com.ryandens/jlink-jib/maven-metadata.xml.svg?label=Jlink%20Jib%20Plugin)](https://plugins.gradle.org/plugin/com.ryandens.jlink-jib)
 
