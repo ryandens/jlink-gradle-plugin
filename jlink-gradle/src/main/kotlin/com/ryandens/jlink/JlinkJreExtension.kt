@@ -9,4 +9,5 @@ abstract class JlinkJreExtension {
     }
 
     abstract val modules: ListProperty<String>
+    abstract val options: ListProperty<String>
 }

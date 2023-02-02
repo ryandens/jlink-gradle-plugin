@@ -16,10 +16,12 @@ class JlinkJrePlugin : Plugin<Project> {
         project.pluginManager.apply(JavaPlugin::class.java)
         val extension = project.extensions.create(JlinkJreExtension.NAME, JlinkJreExtension::class.java).apply {
             modules.convention(listOf("java.base"))
+            options.convention(listOf(""))
         }
 
         val jlinkJreTask = project.tasks.register(JLINK_JRE_TASK_NAME, JlinkJreTask::class.java) {
             it.modules.set(extension.modules)
+            it.options.set(extension.options)
         }
 
         project.configurations.create("jlinkJre") {
