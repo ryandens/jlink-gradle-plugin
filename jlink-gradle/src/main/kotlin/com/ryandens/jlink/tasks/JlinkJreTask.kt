@@ -41,6 +41,7 @@ abstract class JlinkJreTask : AbstractExecTask<JlinkJreTask> {
         // use it as our default for the property
         javaCompiler.convention(defaultJlinkTool)
         modules.convention(listOf("java.base"))
+        options.convention(listOf(""))
 
         outputDirectory.convention(project.layout.buildDirectory.dir("jlink-jre"))
     }
@@ -49,7 +50,7 @@ abstract class JlinkJreTask : AbstractExecTask<JlinkJreTask> {
         setExecutable(javaCompiler.get().metadata.installationPath.file("bin/jlink"))
         val jlinkOutput = outputDirectory.dir("jre").get().asFile
         jlinkOutput.deleteRecursively() // jlink expects the output directory to not exist when it runs
-        setArgs(listOf("--module-path", javaCompiler.get().metadata.installationPath.dir("jmods").asFile.absolutePath, "--add-modules", modules.get().joinToString(","), "--output", jlinkOutput.absolutePath))
+        setArgs(listOf("--module-path", javaCompiler.get().metadata.installationPath.dir("jmods").asFile.absolutePath, "--add-modules", modules.get().joinToString(","), options.get().joinToString(","), "--output", jlinkOutput.absolutePath))
         super.exec()
         javaLauncher.set(object : JavaLauncher {
             override fun getMetadata(): JavaInstallationMetadata {
