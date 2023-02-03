@@ -45,7 +45,7 @@ class JlinkJibPlugin : JibGradlePluginExtension<Void>, Plugin<Project> {
 
         // create jlink layer
         val entries = jlinkJreOutput.get().asFileTree.files.map {
-            FileEntry(it.toPath(), AbsoluteUnixPath.get("$jreInstallationDirectory${it.toRelativeString(jlinkJreOutput.get().asFile)}"), FilePermissions.fromPosixFilePermissions(setOf(PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.OWNER_READ)), FileEntriesLayer.DEFAULT_MODIFICATION_TIME)
+            FileEntry(it.toPath(), AbsoluteUnixPath.get("$jreInstallationDirectory${it.toRelativeString(jlinkJreOutput.get().asFile)}"), FilePermissions.fromPosixFilePermissions(project.extensions.getByType(JlinkJibPluginExtension::class.java).jrePosixFilePermissions.get()), FileEntriesLayer.DEFAULT_MODIFICATION_TIME)
         }.toMutableList()
         val jlinkLayer = FileEntriesLayer.builder().setName("jlink").setEntries(entries).build()
         val layers = mutableListOf<LayerObject>()
@@ -57,7 +57,9 @@ class JlinkJibPlugin : JibGradlePluginExtension<Void>, Plugin<Project> {
     override fun apply(project: Project) {
         project.pluginManager.apply(JlinkJrePlugin::class.java)
 
-        project.extensions.create(JlinkJibPluginExtension.NAME, JlinkJibPluginExtension::class.java)
+        project.extensions.create(JlinkJibPluginExtension.NAME, JlinkJibPluginExtension::class.java).apply {
+            jrePosixFilePermissions.convention(setOf(PosixFilePermission.OTHERS_EXECUTE, PosixFilePermission.OTHERS_READ))
+        }
 
         val jreTask = project.tasks.named(JlinkJrePlugin.JLINK_JRE_TASK_NAME, JlinkJreTask::class.java)
 
