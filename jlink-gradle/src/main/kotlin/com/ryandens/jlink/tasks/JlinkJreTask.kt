@@ -6,6 +6,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.AbstractExecTask
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.jvm.toolchain.JavaCompiler
@@ -18,6 +19,9 @@ abstract class JlinkJreTask : AbstractExecTask<JlinkJreTask> {
 
     @get:Input
     abstract val modules: ListProperty<String>
+
+    @get:InputDirectory
+    abstract val modulePath: DirectoryProperty
 
     @get:OutputDirectory
     abstract val outputDirectory: DirectoryProperty
@@ -34,6 +38,7 @@ abstract class JlinkJreTask : AbstractExecTask<JlinkJreTask> {
         // use it as our default for the property
         javaCompiler.convention(defaultJlinkTool)
         modules.convention(listOf("java.base"))
+        modulePath.convention(javaCompiler.map { it.metadata.installationPath.dir("jmods") })
 
         outputDirectory.convention(project.layout.buildDirectory.dir("jlink-jre"))
     }
@@ -42,7 +47,7 @@ abstract class JlinkJreTask : AbstractExecTask<JlinkJreTask> {
         setExecutable(javaCompiler.get().metadata.installationPath.file("bin/jlink"))
         val jlinkOutput = outputDirectory.dir("jre").get().asFile
         jlinkOutput.deleteRecursively() // jlink expects the output directory to not exist when it runs
-        setArgs(listOf("--module-path", javaCompiler.get().metadata.installationPath.dir("jmods").asFile.absolutePath, "--add-modules", modules.get().joinToString(","), "--output", jlinkOutput.absolutePath))
+        setArgs(listOf("--module-path", modulePath.get().asFile.absolutePath, "--add-modules", modules.get().joinToString(","), "--output", jlinkOutput.absolutePath))
         super.exec()
     }
 }
