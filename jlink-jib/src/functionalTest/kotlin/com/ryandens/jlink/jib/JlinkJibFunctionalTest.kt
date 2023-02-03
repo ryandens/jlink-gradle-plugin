@@ -69,10 +69,6 @@ class JlinkJibFunctionalTest {
     modules = ['$module']
   }
   
-  jlinkJib {
-    javaBaseSha = "4682dc38e7658f2c9de5d41df0a9b4e1472f376b82724e332bea91de33a83fbf"
-  }
-  
   java {
       toolchain {
           languageVersion = JavaLanguageVersion.of(17)

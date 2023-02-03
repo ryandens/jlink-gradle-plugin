@@ -38,9 +38,6 @@ class JlinkJibPlugin : JibGradlePluginExtension<Void>, Plugin<Project> {
         val jreInstallationDirectory = "/usr/lib/jvm/jlink-jre/"
         val planBuilder = buildPlan.toBuilder()
 
-        // set base image to java-base, which doesn't have java installed on it
-        planBuilder.setBaseImage("gcr.io/distroless/java-base@sha256:${project.extensions.getByType(JlinkJibPluginExtension::class.java).javaBaseSha.get()}")
-
         // create entrypoint, replace java executable with our own executable
         entrypoint.removeFirst()
         entrypoint.add(0, "${jreInstallationDirectory}jre/bin/java")
