@@ -26,7 +26,7 @@ jlink java binary rather than the java binary discovered relative on the host.
 ```kotlin
 plugins {
   application
-  id("com.ryandens.jlink-application") version "0.2.0"
+  id("com.ryandens.jlink-application") version "0.3.0"
 }
 
 java {
@@ -49,22 +49,23 @@ jlinkJre {
 
 This Gradle plugin tightly integrates with the [the [jib-gradle-plugin](https://github.com/GoogleContainerTools/jib/tree/master/jib-gradle-plugin)
 via the [jib-extensions](https://github.com/GoogleContainerTools/jib-extensions) API to make building container images 
-via Gradle with jlink-created JREs easy. This plugin replaces the specified base image of your container image with
-[distroless/java-base](https://console.cloud.google.com/gcr/images/distroless/global/java-base), which has no JRE
-installed. It will also add the JRE created by `jlink-jre` plugin as a separate layer of your container image and modify
-the entrypoint of your application to use the `java` executable from the custom JRE rather than expecting one to be on
-the path. You must provide an image sha256 for the `java-base` container image you'd like to use.
+via Gradle with jlink-created JREs easy. This plugin adds the JRE created by `jlink-jre` plugin as a separate layer of 
+your container image and modify the entrypoint of your application to use the `java` executable from the custom JRE 
+rather than expecting one to be on the path. It is recommended to override the default jib base image with a base image
+that does not have java installed, in order to reap the most benefits of jlink. We recommend 
+`gcr.io/distroless/java-base-debian11:nonroot-arm64@sha256:YOUR_PREFERRED_SHA_HERE`, replacing `YOUR_PREFERRED_SHA_HERE`
+with the latest released image sha.
 
 
 ```kotlin
 plugins {
   application
-  id("com.ryandens.jlink-jib") version "0.2.0"
+  id("com.ryandens.jlink-jib") version "0.3.0"
 }
 
 java {
   toolchain {
-    languageVersion.set(JavaLanguageVersion.of(11))
+    languageVersion.set(JavaLanguageVersion.of(19))
   }
 }
 
@@ -72,19 +73,76 @@ application {
   mainClass.set("yourMainClass")
 }
 
-jlinkJib {
-  javaBaseSha.set("4682dc38e7658f2c9de5d41df0a9b4e1472f376b82724e332bea91de33a83fbf")
-}
-
-jlinkJre {
-  modules.set(setOf("java.sql", "java.instrument")) // defaults to only java.base
-}
+// this base image does not have a java installation
+jib.from.image = "gcr.io/distroless/java-base-debian11:nonroot-arm64"
 
 ```
 
 This enables two key advantages over traditional distroless images built by jib:
-- Smaller image sizes. For a simple application previously based on the java 17 distorless image, I saw a reduction in size by 170 MB
+- Smaller image sizes. For a simple application previously based on the java 17 distorless image, I saw a reduction in size by 90 MB when using the `java-base-debian11:nonroot-arm64` image with a jlink JRE added compared to `java17-debian11:nonroot-arm64`
 - Enable the use of distroless images with modern java runtimes. Typically, the Google distroless project only creates container images for LTS releases of Java as defined by Oracle. 
+
+
+### Jlink Jib plugin usage for different architectures
+
+When building a container image for a different architecture than your host platform, you'll need to configure the jlink
+task to use the java modules for your target platform. For example, when building a linux container image on OS X,
+the default jlink-jre task will output a JRE for the OS X platform, so the resulting container image built by `jib` 
+would not be able to run the OS X native executables. In that case, it is recommended to use the
+`temurin-binaries-repository`, as shown below, to resolve the JDK for another platform, register a new `JlinkJreTask` 
+task for generating a JRE for the desired platform, and configure the `jlink-jib` plugin to use the new`JlinkJreTask` 
+output as the source of the JRE that will be inserted into the container image.
+
+```kotlin
+plugins {
+  application
+  id("com.ryandens.jlink-jib") version "0.3.0"
+  id("com.ryandens.temurin-binaries-repository") version "0.3.0"
+}
+
+val jdk by configurations.creating {
+    isCanBeResolved = true
+    isCanBeConsumed = false
+    isVisible = false
+}
+
+dependencies {
+    jdk("temurin19-binaries:OpenJDK19U-jdk_aarch64_linux_hotspot_19.0.2_7:jdk-19.0.2+7@tar.gz")
+}
+
+val copyJdks = tasks.register<Copy>("copyJdks") {
+    from(tarTree(jdk.singleFile))
+    into(project.layout.buildDirectory.dir("jdks"))
+}
+
+java {
+  toolchain {
+    languageVersion.set(JavaLanguageVersion.of(19))
+  }
+}
+
+application {
+  mainClass.set("yourMainClass")
+}
+
+// this base image does not have a java installation
+jib.from.image = "gcr.io/distroless/java-base-debian11:nonroot-arm64"
+
+val linuxJlinkJre = project.tasks.register<JlinkJreTask>("linuxJlinkJre") {
+    // by default, JlinkJreTask uses the module path associated with the configured java toolchain that is executing
+    // the jlink command, but this can be overridden to instead point at a different jmods directory for the purpose
+    // of building a JRE for a different platform
+    this.modulePath.fileProvider(copyJdks.map { File(it.destinationDir, "jdk-19.0.2+7/jmods/") })
+    outputDirectory.set(file(layout.buildDirectory.dir("jlink-jre-linux")))
+}
+
+jlinkJib {
+    // by default, this plugin will include the JRE built by the jlinkJre task. Optionally, any directory can be used.
+    // this enables the default jlinkJre task to build a JRE for one platform and a custom JlinkJreTask to build a JRE
+    // for another platform
+    jlinkJre.value(linuxJlinkJre.map { it.outputDirectory.get() })
+}
+```
 
 ## Creating a custom runtime
 
@@ -96,7 +154,7 @@ build directory of the project.
 ```kotlin
 plugins {
   java
-  id("com.ryandens.jlink-jre") version "0.2.0"
+  id("com.ryandens.jlink-jre") version "0.3.0"
 }
 
 java {
