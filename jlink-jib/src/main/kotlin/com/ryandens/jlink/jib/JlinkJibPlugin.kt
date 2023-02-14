@@ -34,7 +34,8 @@ class JlinkJibPlugin : JibGradlePluginExtension<Void>, Plugin<Project> {
         val entrypoint = checkNotNull(buildPlan.entrypoint)
 
         val project = gradleData!!.project
-        val jlinkJreOutput = project.tasks.named(JlinkJrePlugin.JLINK_JRE_TASK_NAME, JlinkJreTask::class.java).get().outputDirectory
+        val jlinkJibPluginExtension = project.extensions.getByType(JlinkJibPluginExtension::class.java)
+        val jlinkJreOutput = jlinkJibPluginExtension.jlinkJre
         val jreInstallationDirectory = "/usr/lib/jvm/jlink-jre/"
         val planBuilder = buildPlan.toBuilder()
 
@@ -45,7 +46,7 @@ class JlinkJibPlugin : JibGradlePluginExtension<Void>, Plugin<Project> {
 
         // create jlink layer
         val entries = jlinkJreOutput.get().asFileTree.files.map {
-            FileEntry(it.toPath(), AbsoluteUnixPath.get("$jreInstallationDirectory${it.toRelativeString(jlinkJreOutput.get().asFile)}"), FilePermissions.fromPosixFilePermissions(project.extensions.getByType(JlinkJibPluginExtension::class.java).jrePosixFilePermissions.get()), FileEntriesLayer.DEFAULT_MODIFICATION_TIME)
+            FileEntry(it.toPath(), AbsoluteUnixPath.get("$jreInstallationDirectory${it.toRelativeString(jlinkJreOutput.get().asFile)}"), FilePermissions.fromPosixFilePermissions(jlinkJibPluginExtension.jrePosixFilePermissions.get()), FileEntriesLayer.DEFAULT_MODIFICATION_TIME)
         }.toMutableList()
         val jlinkLayer = FileEntriesLayer.builder().setName("jlink").setEntries(entries).build()
         val layers = mutableListOf<LayerObject>()
@@ -57,15 +58,13 @@ class JlinkJibPlugin : JibGradlePluginExtension<Void>, Plugin<Project> {
     override fun apply(project: Project) {
         project.pluginManager.apply(JlinkJrePlugin::class.java)
 
-        project.extensions.create(JlinkJibPluginExtension.NAME, JlinkJibPluginExtension::class.java).apply {
-            jrePosixFilePermissions.convention(setOf(PosixFilePermission.OTHERS_EXECUTE, PosixFilePermission.OTHERS_READ))
-        }
-
-        val jreTask = project.tasks.named(JlinkJrePlugin.JLINK_JRE_TASK_NAME, JlinkJreTask::class.java)
+        val extension = project.extensions.create(JlinkJibPluginExtension.NAME, JlinkJibPluginExtension::class.java)
+        extension.jrePosixFilePermissions.convention(setOf(PosixFilePermission.OTHERS_EXECUTE, PosixFilePermission.OTHERS_READ))
+        extension.jlinkJre.convention(project.tasks.named(JlinkJrePlugin.JLINK_JRE_TASK_NAME, JlinkJreTask::class.java).map { it.outputDirectory.get() })
 
         listOf("jib", "jibDockerBuild", "jibBuildTar").forEach { jibTaskName ->
             project.tasks.named(jibTaskName) { jibTask ->
-                jibTask.inputs.dir(jreTask.get().outputDirectory)
+                jibTask.inputs.dir(extension.jlinkJre)
             }
         }
 
