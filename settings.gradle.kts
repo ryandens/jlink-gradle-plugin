@@ -5,6 +5,7 @@ plugins {
 rootProject.name = "jlink-gradle-plugin"
 include("jlink-gradle")
 include("jlink-jib")
+include("temurin-binaries-repository")
 
 
 val isCI = System.getenv("CI") != null
