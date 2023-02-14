@@ -34,7 +34,7 @@ dependencies {
 
 gradlePlugin {
     website.set("https://www.ryandens.com")
-    vcsUrl.set("https://github.com/ryandens/javaagent-gradle-plugin")
+    vcsUrl.set("https://github.com/ryandens/jlink-gradle-plugin")
 }
 
 group = "com.ryandens"
