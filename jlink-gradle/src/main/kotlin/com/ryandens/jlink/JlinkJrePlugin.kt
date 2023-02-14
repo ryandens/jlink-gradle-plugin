@@ -18,7 +18,9 @@ class JlinkJrePlugin : Plugin<Project> {
             modules.convention(listOf("java.base"))
         }
 
-        val jlinkJreTask = project.tasks.register(JLINK_JRE_TASK_NAME, JlinkJreTask::class.java) {
+        val jlinkJreTask = project.tasks.register(JLINK_JRE_TASK_NAME, JlinkJreTask::class.java)
+
+        project.tasks.withType(JlinkJreTask::class.java).configureEach {
             it.modules.set(extension.modules)
         }
 
