@@ -32,10 +32,9 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 }
 
-pluginBundle {
-    website = "https://www.ryandens.com"
-    vcsUrl = "https://github.com/ryandens/javaagent-gradle-plugin"
-    tags = listOf("jlink", "docker", "jib", "application")
+gradlePlugin {
+    website.set("https://www.ryandens.com")
+    vcsUrl.set("https://github.com/ryandens/javaagent-gradle-plugin")
 }
 
 group = "com.ryandens"
