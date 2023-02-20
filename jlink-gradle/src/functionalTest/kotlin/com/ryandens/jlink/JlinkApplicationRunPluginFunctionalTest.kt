@@ -98,7 +98,7 @@ class JlinkApplicationRunPluginFunctionalTest {
         val runner = GradleRunner.create()
         runner.forwardOutput()
         runner.withPluginClasspath()
-        runner.withArguments("installDist", "execStartScript")
+        runner.withArguments("execStartScript")
         runner.withProjectDir(projectDir)
         val result = runner.build()
 
@@ -174,6 +174,7 @@ class JlinkApplicationRunPluginFunctionalTest {
   }
   
   task execStartScript(type: Exec) {
+    dependsOn('installDist')
     workingDir '${projectDir.canonicalPath}/build/install/${projectDir.name}/bin/'
     commandLine './${projectDir.name}'
   }
