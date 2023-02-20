@@ -30,7 +30,7 @@ class JlinkJrePlugin : Plugin<Project> {
             it.outgoing.artifact(
                 jlinkJreTask.flatMap { jreTask ->
                     jreTask.outputDirectory
-                }
+                },
             )
         }
     }
