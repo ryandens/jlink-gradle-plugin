@@ -15,7 +15,7 @@ class JlinkJreApplicationRunPlugin : Plugin<Project> {
             val jlinkJreTask = project.tasks.named(JlinkJrePlugin.JLINK_JRE_TASK_NAME, JlinkJreTask::class.java).get()
             val jlinkOutput = jlinkJreTask.outputDirectory
             it.inputs.dir(jlinkOutput)
-            it.javaLauncher.set(JlinkJavaLauncher(jlinkJreTask.javaCompiler.map { it.metadata }, jlinkJreTask.outputDirectory.file("jre/bin/java")))
+            it.javaLauncher.set(JlinkJavaLauncher(jlinkJreTask.javaCompiler.map { javaCompiler -> javaCompiler.metadata }, jlinkJreTask.outputDirectory.file("jre/bin/java")))
         }
     }
 }

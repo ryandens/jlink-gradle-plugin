@@ -78,7 +78,7 @@ class JlinkJibFunctionalTest {
           languageVersion = JavaLanguageVersion.of(17)
       }
   }
-  """
+  """,
         )
 
         val file = File(projectDir, "src/main/java/com/ryandens/example/")
@@ -94,7 +94,7 @@ class JlinkJibFunctionalTest {
             }
           
           }
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 }

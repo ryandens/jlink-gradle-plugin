@@ -178,7 +178,7 @@ class JlinkApplicationRunPluginFunctionalTest {
     workingDir '${projectDir.canonicalPath}/build/install/${projectDir.name}/bin/'
     commandLine './${projectDir.name}'
   }
-  """
+  """,
         )
 
         val file = File(projectDir, "src/main/java/com/ryandens/example/")
@@ -194,7 +194,7 @@ class JlinkApplicationRunPluginFunctionalTest {
             }
           
           }
-            """.trimIndent()
+            """.trimIndent(),
         )
     }
 }

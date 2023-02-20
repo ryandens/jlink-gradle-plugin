@@ -28,7 +28,7 @@ class JlinkJibPlugin : JibGradlePluginExtension<Void>, Plugin<Project> {
         properties: MutableMap<String, String>?,
         extraConfig: Optional<Void>?,
         gradleData: GradleData?,
-        logger: ExtensionLogger?
+        logger: ExtensionLogger?,
     ): ContainerBuildPlan {
         checkNotNull(buildPlan)
         val entrypoint = checkNotNull(buildPlan.entrypoint)
