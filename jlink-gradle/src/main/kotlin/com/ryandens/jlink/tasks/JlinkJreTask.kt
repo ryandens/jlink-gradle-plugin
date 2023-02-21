@@ -1,5 +1,6 @@
 package com.ryandens.jlink.tasks
 
+import com.ryandens.jlink.JlinkJreExtension
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.ListProperty
@@ -19,6 +20,21 @@ abstract class JlinkJreTask : AbstractExecTask<JlinkJreTask> {
 
     @get:Input
     abstract val modules: ListProperty<String>
+
+    @get:Input
+    abstract val compress: Property<Int>
+
+    @get:Input
+    abstract val stripDebug: Property<Boolean>
+
+    @get:Input
+    abstract val noHeaderFiles: Property<Boolean>
+
+    @get:Input
+    abstract val noManPages: Property<Boolean>
+
+    @get:Input
+    abstract val endian: Property<JlinkJreExtension.Endian>
 
     @get:InputDirectory
     abstract val modulePath: DirectoryProperty
@@ -47,7 +63,38 @@ abstract class JlinkJreTask : AbstractExecTask<JlinkJreTask> {
         setExecutable(javaCompiler.get().metadata.installationPath.file("bin/jlink"))
         val jlinkOutput = outputDirectory.dir("jre").get().asFile
         jlinkOutput.deleteRecursively() // jlink expects the output directory to not exist when it runs
-        setArgs(listOf("--module-path", modulePath.get().asFile.absolutePath, "--add-modules", modules.get().joinToString(","), "--output", jlinkOutput.absolutePath))
+
+        args = buildList {
+            addAll(
+                listOf(
+                    "--module-path",
+                    modulePath.get().asFile.absolutePath,
+                    "--add-modules",
+                    modules.get().joinToString(","),
+                    "--compress",
+                    "${compress.get()}",
+                    "--output",
+                    jlinkOutput.absolutePath,
+                ),
+            )
+
+            if (stripDebug.get()) {
+                add("--strip-debug")
+            }
+
+            if (noHeaderFiles.get()) {
+                add("--no-header-files")
+            }
+
+            if (noManPages.get()) {
+                add("--no-man-pages")
+            }
+
+            if (endian.get() != JlinkJreExtension.Endian.NATIVE) {
+                add("--endian")
+                add(endian.get().toString().lowercase())
+            }
+        }
         super.exec()
     }
 }
