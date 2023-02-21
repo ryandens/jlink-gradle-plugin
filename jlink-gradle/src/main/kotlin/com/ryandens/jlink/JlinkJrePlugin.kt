@@ -16,12 +16,22 @@ class JlinkJrePlugin : Plugin<Project> {
         project.pluginManager.apply(JavaPlugin::class.java)
         val extension = project.extensions.create(JlinkJreExtension.NAME, JlinkJreExtension::class.java).apply {
             modules.convention(listOf("java.base"))
+            compress.convention(2)
+            stripDebug.convention(true)
+            noHeaderFiles.convention(true)
+            noManPages.convention(true)
+            endian.convention(JlinkJreExtension.Endian.NATIVE)
         }
 
         val jlinkJreTask = project.tasks.register(JLINK_JRE_TASK_NAME, JlinkJreTask::class.java)
 
         project.tasks.withType(JlinkJreTask::class.java).configureEach {
             it.modules.set(extension.modules)
+            it.compress.set(extension.compress)
+            it.stripDebug.set(extension.stripDebug)
+            it.noHeaderFiles.set(extension.noHeaderFiles)
+            it.noManPages.set(extension.noManPages)
+            it.endian.set(extension.endian)
         }
 
         project.configurations.create("jlinkJre") {
