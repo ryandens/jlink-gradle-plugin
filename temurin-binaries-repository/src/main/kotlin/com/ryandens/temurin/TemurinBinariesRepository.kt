@@ -2,26 +2,38 @@ package com.ryandens.temurin
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.dsl.RepositoryHandler
+import org.gradle.api.initialization.Settings
 import java.net.URI
 
-class TemurinBinariesRepository : Plugin<Project> {
-    override fun apply(project: Project) {
-        project.repositories.apply {
-            exclusiveContent { exclusiveContentRepository ->
-                exclusiveContentRepository.forRepository {
-                    ivy { ivyRepository ->
-                        ivyRepository.url = URI.create("https://github.com/adoptium/")
-                        ivyRepository.patternLayout { layout ->
-                            layout.artifact("[organisation]/releases/download/[revision]/[module].[ext]")
-                        }
-                        ivyRepository.metadataSources { metadataSources ->
-                            metadataSources.artifact()
-                        }
+class TemurinBinariesRepository : Plugin<Any> {
+    override fun apply(target: Any) {
+        if (target is Project) {
+            apply(target)
+        } else if (target is Settings) {
+            apply(target)
+        }
+    }
+
+    private fun apply(project: Project) = project.repositories.addRepository()
+
+    private fun apply(settings: Settings) = settings.dependencyResolutionManagement.repositories.addRepository()
+
+    private fun RepositoryHandler.addRepository() {
+        exclusiveContent { exclusiveContentRepository ->
+            exclusiveContentRepository.forRepository {
+                ivy { ivyRepository ->
+                    ivyRepository.url = URI.create("https://github.com/adoptium/")
+                    ivyRepository.patternLayout { layout ->
+                        layout.artifact("[organisation]/releases/download/[revision]/[module].[ext]")
+                    }
+                    ivyRepository.metadataSources { metadataSources ->
+                        metadataSources.artifact()
                     }
                 }
-                exclusiveContentRepository.filter { filter ->
-                    filter.includeGroupByRegex("^temurin([1-9]*)-binaries")
-                }
+            }
+            exclusiveContentRepository.filter { filter ->
+                filter.includeGroupByRegex("^temurin([1-9]*)-binaries")
             }
         }
     }
