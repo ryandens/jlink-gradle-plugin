@@ -56,6 +56,10 @@ class JlinkJibPlugin : JibGradlePluginExtension<Void>, Plugin<Project> {
     }
 
     override fun apply(project: Project) {
+        checkNotNull(project.extensions.findByName("jib")) {
+            "Jlink Jib plugin requires the Jib plugin to have been applied"
+        }
+
         project.pluginManager.apply(JlinkJrePlugin::class.java)
 
         val extension = project.extensions.create(JlinkJibPluginExtension.NAME, JlinkJibPluginExtension::class.java)
