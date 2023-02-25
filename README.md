@@ -112,7 +112,7 @@ dependencies {
 }
 
 val copyJdks = tasks.register<Copy>("copyJdks") {
-    from(tarTree(jdk.singleFile))
+    from(provider {tarTree(jdk.singleFile)})
     into(project.layout.buildDirectory.dir("jdks"))
 }
 
