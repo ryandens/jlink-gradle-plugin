@@ -56,7 +56,7 @@ class JlinkJibPlugin : JibGradlePluginExtension<Void>, Plugin<Project> {
     }
 
     override fun apply(project: Project) {
-        checkNotNull(project.extensions.findByName("jib")) {
+        checkNotNull(project.pluginManager.hasPlugin("com.google.cloud.tools.jib")) {
             "Jlink Jib plugin requires the Jib plugin to have been applied"
         }
 

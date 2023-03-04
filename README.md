@@ -60,7 +60,7 @@ with the latest released image sha.
 ```kotlin
 plugins {
   application
-  id("com.google.cloud.tools.jib") version "3.1.4"
+  id("com.google.cloud.tools.jib") version "3.3.1"
   id("com.ryandens.jlink-jib") version "0.3.0"
 }
 
