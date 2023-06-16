@@ -5,6 +5,8 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
 import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.tasks.Copy
+import org.gradle.configurationcache.extensions.capitalized
 
 class JlinkJrePlugin : Plugin<Project> {
 
@@ -31,7 +33,7 @@ class JlinkJrePlugin : Plugin<Project> {
             it.stripDebug.set(extension.stripDebug)
             it.noHeaderFiles.set(extension.noHeaderFiles)
             it.noManPages.set(extension.noManPages)
-            it.endian.set(extension.endian)
+            it.endian.convention(extension.endian)
         }
 
         project.configurations.create("jlinkJre") {
@@ -44,6 +46,39 @@ class JlinkJrePlugin : Plugin<Project> {
                     jreTask.outputDirectory
                 },
             )
+        }
+
+        val jlinkAll = project.tasks.create("jlinkAll") {
+            it.group = "jlink"
+            it.description = "Creates all JREs"
+            it.dependsOn(jlinkJreTask)
+        }
+
+        extension.variants.all { variant ->
+            val variantName = variant.name
+
+            val jdk = project.configurations.create("${variantName}Jdk").apply {
+                isCanBeResolved = true
+                isCanBeConsumed = false
+                isVisible = false
+                defaultDependencies { it.addLater(variant.jdkDependencyCoordinates.map(project.dependencies::create)) }
+            }
+
+            val copyJdks = project.tasks.register("download${variantName.capitalized()}Jdk", Copy::class.java) {
+                it.group = "jlink"
+                it.description = "Downloads the JDK for $variantName"
+                it.from(variant.operatingSystem.map { it.archiveExtractor(project, jdk.singleFile) })
+                it.into(project.layout.buildDirectory.dir("jdks/$variantName"))
+            }
+
+            val createJre = project.tasks.register(variant.jlinkTaskName, JlinkJreTask::class.java) {
+                it.group = "jlink"
+                it.description = "Creates the JRE for $variantName"
+                it.outputDirectory.set(project.layout.buildDirectory.dir("jres/$variantName"))
+                it.modulePath.fileProvider(copyJdks.map { it.destinationDir.resolve("${variant.version.get()}/${variant.operatingSystem.get().jmodsPath}") })
+                it.endian.set(variant.endian)
+            }
+            jlinkAll.dependsOn(createJre)
         }
     }
 }
