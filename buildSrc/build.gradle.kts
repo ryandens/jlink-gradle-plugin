@@ -15,7 +15,7 @@ spotless {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin:1.8.10")
+    implementation("org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin:1.9.10")
     implementation("com.gradle.plugin-publish:com.gradle.plugin-publish.gradle.plugin:1.1.0")
-    implementation("com.diffplug.spotless:com.diffplug.spotless.gradle.plugin:6.15.0")
+    implementation("com.diffplug.spotless:com.diffplug.spotless.gradle.plugin:6.22.0")
 }
