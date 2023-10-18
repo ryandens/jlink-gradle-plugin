@@ -19,12 +19,13 @@ java {
     }
 }
 
+val jdkByteCodeTarget = 11
 tasks.withType<JavaCompile> {
-    options.release.set(11)
+    options.release.set(jdkByteCodeTarget)
 }
 
 tasks.withType<KotlinCompile> {
-    this.kotlinOptions.jvmTarget = "11"
+    this.kotlinOptions.jvmTarget = "$jdkByteCodeTarget"
 }
 
 dependencies {
