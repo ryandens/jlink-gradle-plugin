@@ -7,7 +7,6 @@ import org.gradle.api.plugins.ApplicationPlugin
 import org.gradle.api.tasks.JavaExec
 
 class JlinkJreApplicationRunPlugin : Plugin<Project> {
-
     override fun apply(project: Project) {
         project.pluginManager.apply(ApplicationPlugin::class.java)
         project.pluginManager.apply(JlinkJrePlugin::class.java)
@@ -15,7 +14,15 @@ class JlinkJreApplicationRunPlugin : Plugin<Project> {
             val jlinkJreTask = project.tasks.named(JlinkJrePlugin.JLINK_JRE_TASK_NAME, JlinkJreTask::class.java).get()
             val jlinkOutput = jlinkJreTask.outputDirectory
             it.inputs.dir(jlinkOutput)
-            it.javaLauncher.set(JlinkJavaLauncher(jlinkJreTask.javaCompiler.map { javaCompiler -> javaCompiler.metadata }, jlinkJreTask.outputDirectory.file("jre/bin/java")))
+            it.javaLauncher.set(
+                JlinkJavaLauncher(
+                    jlinkJreTask.javaCompiler.map {
+                            javaCompiler ->
+                        javaCompiler.metadata
+                    },
+                    jlinkJreTask.outputDirectory.file("jre/bin/java"),
+                ),
+            )
         }
     }
 }

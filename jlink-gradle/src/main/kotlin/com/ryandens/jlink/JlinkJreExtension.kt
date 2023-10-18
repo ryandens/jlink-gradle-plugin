@@ -4,7 +4,6 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 
 abstract class JlinkJreExtension {
-
     companion object {
         const val NAME = "jlinkJre"
     }

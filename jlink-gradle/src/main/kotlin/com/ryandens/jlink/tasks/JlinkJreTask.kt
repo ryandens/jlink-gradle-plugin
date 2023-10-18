@@ -64,37 +64,38 @@ abstract class JlinkJreTask : AbstractExecTask<JlinkJreTask> {
         val jlinkOutput = outputDirectory.dir("jre").get().asFile
         jlinkOutput.deleteRecursively() // jlink expects the output directory to not exist when it runs
 
-        args = buildList {
-            addAll(
-                listOf(
-                    "--module-path",
-                    modulePath.get().asFile.absolutePath,
-                    "--add-modules",
-                    modules.get().joinToString(","),
-                    "--compress",
-                    "${compress.get()}",
-                    "--output",
-                    jlinkOutput.absolutePath,
-                ),
-            )
+        args =
+            buildList {
+                addAll(
+                    listOf(
+                        "--module-path",
+                        modulePath.get().asFile.absolutePath,
+                        "--add-modules",
+                        modules.get().joinToString(","),
+                        "--compress",
+                        "${compress.get()}",
+                        "--output",
+                        jlinkOutput.absolutePath,
+                    ),
+                )
 
-            if (stripDebug.get()) {
-                add("--strip-debug")
-            }
+                if (stripDebug.get()) {
+                    add("--strip-debug")
+                }
 
-            if (noHeaderFiles.get()) {
-                add("--no-header-files")
-            }
+                if (noHeaderFiles.get()) {
+                    add("--no-header-files")
+                }
 
-            if (noManPages.get()) {
-                add("--no-man-pages")
-            }
+                if (noManPages.get()) {
+                    add("--no-man-pages")
+                }
 
-            if (endian.get() != JlinkJreExtension.Endian.NATIVE) {
-                add("--endian")
-                add(endian.get().toString().lowercase())
+                if (endian.get() != JlinkJreExtension.Endian.NATIVE) {
+                    add("--endian")
+                    add(endian.get().toString().lowercase())
+                }
             }
-        }
         super.exec()
     }
 }

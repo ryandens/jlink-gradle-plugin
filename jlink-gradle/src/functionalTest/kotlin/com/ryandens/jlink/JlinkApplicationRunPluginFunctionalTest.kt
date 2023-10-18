@@ -51,11 +51,12 @@ class JlinkApplicationRunPluginFunctionalTest {
         assertTrue(result.output.contains("Hello World"))
         assertTrue(result.output.contains("Configuration cache entry stored."))
 
-        val ccResult = GradleRunner.create()
-            .forwardOutput()
-            .withPluginClasspath()
-            .withArguments("--configuration-cache", "run")
-            .withProjectDir(projectDir).build()
+        val ccResult =
+            GradleRunner.create()
+                .forwardOutput()
+                .withPluginClasspath()
+                .withArguments("--configuration-cache", "run")
+                .withProjectDir(projectDir).build()
 
         // verify the configuration cache is used
         assertTrue(ccResult.output.contains("Reusing configuration cache."))
@@ -123,11 +124,12 @@ class JlinkApplicationRunPluginFunctionalTest {
         assertTrue(result.output.contains("java.sql.Statement"))
         assertTrue(result.output.contains("Configuration cache entry stored."))
 
-        val ccResult = GradleRunner.create()
-            .forwardOutput()
-            .withPluginClasspath()
-            .withArguments("--configuration-cache", "installDist", "execStartScript")
-            .withProjectDir(projectDir).build()
+        val ccResult =
+            GradleRunner.create()
+                .forwardOutput()
+                .withPluginClasspath()
+                .withArguments("--configuration-cache", "installDist", "execStartScript")
+                .withProjectDir(projectDir).build()
 
         // verify the configuration cache is used
         assertTrue(ccResult.output.contains("Reusing configuration cache."))
@@ -149,7 +151,10 @@ class JlinkApplicationRunPluginFunctionalTest {
         assertTrue(result.output.contains("java.lang.NoClassDefFoundError: java/sql/Statement"))
     }
 
-    private fun setupProject(printlnParam: String, module: String) {
+    private fun setupProject(
+        printlnParam: String,
+        module: String,
+    ) {
         // Setup the test build
         settingsFile.writeText("")
         buildFile.writeText(
@@ -185,15 +190,15 @@ class JlinkApplicationRunPluginFunctionalTest {
         file.mkdirs()
         file.resolve("App.java").writeText(
             """
-          package com.ryandens.example;
-          
-          public final class App {
-          
-            public static void main(final String[] args) {
-              System.out.println($printlnParam);
+            package com.ryandens.example;
+            
+            public final class App {
+            
+              public static void main(final String[] args) {
+                System.out.println($printlnParam);
+              }
+            
             }
-          
-          }
             """.trimIndent(),
         )
     }

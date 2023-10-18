@@ -7,10 +7,10 @@ import org.gradle.api.initialization.Settings
 import java.net.URI
 
 class TemurinBinariesRepository : Plugin<Any> {
-
     companion object {
         internal val REPO_REGEX = "^temurin([0-9]*)-binaries"
     }
+
     override fun apply(target: Any) {
         if (target is Project) {
             apply(target)
