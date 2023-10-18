@@ -66,7 +66,7 @@ plugins {
 
 java {
   toolchain {
-    languageVersion.set(JavaLanguageVersion.of(19))
+    languageVersion.set(JavaLanguageVersion.of(21))
   }
 }
 
@@ -118,7 +118,7 @@ val copyJdks = tasks.register<Copy>("copyJdks") {
 
 java {
   toolchain {
-    languageVersion.set(JavaLanguageVersion.of(19))
+    languageVersion.set(JavaLanguageVersion.of(21))
   }
 }
 
