@@ -4,7 +4,6 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 class TemurinBinariesRepositoryTest {
-
     @Test fun `plugin registers task`() {
         // Create a test project and apply the plugin
         assertTrue(TemurinBinariesRepository.REPO_REGEX.toRegex().matches("temurin8-binaries"))

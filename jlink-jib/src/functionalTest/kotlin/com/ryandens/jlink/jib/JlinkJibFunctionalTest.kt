@@ -50,7 +50,10 @@ class JlinkJibFunctionalTest {
         }
     }
 
-    private fun setupProject(printlnParam: String, module: String) {
+    private fun setupProject(
+        printlnParam: String,
+        module: String,
+    ) {
         // Setup the test build
         settingsFile.writeText("")
         buildFile.writeText(
@@ -81,15 +84,15 @@ class JlinkJibFunctionalTest {
         file.mkdirs()
         file.resolve("App.java").writeText(
             """
-          package com.ryandens.example;
-          
-          public final class App {
-          
-            public static void main(final String[] args) {
-              System.out.println($printlnParam);
+            package com.ryandens.example;
+            
+            public final class App {
+            
+              public static void main(final String[] args) {
+                System.out.println($printlnParam);
+              }
+            
             }
-          
-          }
             """.trimIndent(),
         )
     }

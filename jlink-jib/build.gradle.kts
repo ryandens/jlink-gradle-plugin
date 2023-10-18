@@ -2,9 +2,10 @@ plugins {
     id("com.ryandens.jlink.plugin-conventions")
 }
 
-description = """
-  A gradle plugin and jib extension enabling the automatic use of a jlink runtime in a container image built by jib.
-""".trimIndent()
+description =
+    """
+    A gradle plugin and jib extension enabling the automatic use of a jlink runtime in a container image built by jib.
+    """.trimIndent()
 
 dependencies {
     implementation(project(":jlink-gradle"))

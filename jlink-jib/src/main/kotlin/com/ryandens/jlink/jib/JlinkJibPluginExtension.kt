@@ -5,7 +5,6 @@ import org.gradle.api.provider.SetProperty
 import java.nio.file.attribute.PosixFilePermission
 
 abstract class JlinkJibPluginExtension {
-
     companion object {
         const val NAME = "jlinkJib"
     }
