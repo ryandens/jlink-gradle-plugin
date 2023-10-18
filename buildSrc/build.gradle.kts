@@ -7,13 +7,16 @@ repositories {
     gradlePluginPortal()
 }
 
+// Kotlin DSL plugin and jetbrains can't seem to target java 21 for kotlin compilation yet
+val jdkBytecodeTargetForBuildLogic = 17
 tasks.compileJava {
-    options.release.set(17)
+    options.release.set(jdkBytecodeTargetForBuildLogic)
 }
 
 tasks.compileKotlin {
     kotlinOptions {
-        jvmTarget = "17"
+        // kotlin convert integer into a string
+        jvmTarget = "$jdkBytecodeTargetForBuildLogic"
     }
 }
 
@@ -26,6 +29,6 @@ spotless {
 
 dependencies {
     implementation("org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin:1.9.10")
-    implementation("com.gradle.plugin-publish:com.gradle.plugin-publish.gradle.plugin:1.1.0")
+    implementation("com.gradle.plugin-publish:com.gradle.plugin-publish.gradle.plugin:1.2.1")
     implementation("com.diffplug.spotless:com.diffplug.spotless.gradle.plugin:6.22.0")
 }
