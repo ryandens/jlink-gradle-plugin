@@ -7,6 +7,16 @@ repositories {
     gradlePluginPortal()
 }
 
+tasks.compileJava {
+    options.release.set(17)
+}
+
+tasks.compileKotlin {
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+}
+
 spotless {
     kotlinGradle {
         target("*.gradle.kts", "src/main/kotlin/*.gradle.kts")
