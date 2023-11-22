@@ -4,8 +4,8 @@ import org.gradle.api.internal.plugins.DefaultTemplateBasedStartScriptGenerator
 import org.gradle.api.internal.plugins.StartScriptTemplateBindingFactory
 import org.gradle.util.internal.TextUtil
 
-class JlinkAwareStartScriptGenerator : DefaultTemplateBasedStartScriptGenerator(
+class JlinkAwareUnixStartScriptGenerator : DefaultTemplateBasedStartScriptGenerator(
     TextUtil.getUnixLineSeparator(),
     StartScriptTemplateBindingFactory.unix(),
-    utf8ClassPathResource(JlinkAwareStartScriptGenerator::class.java, "unixStartScript.txt"),
+    utf8ClassPathResource(JlinkAwareUnixStartScriptGenerator::class.java, "unixStartScript.txt"),
 )
