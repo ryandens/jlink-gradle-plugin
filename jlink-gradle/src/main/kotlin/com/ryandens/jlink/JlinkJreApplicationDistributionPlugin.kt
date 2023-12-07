@@ -32,16 +32,18 @@ class JlinkJreApplicationDistributionPlugin : Plugin<Project> {
 
         project.tasks.named(ApplicationPlugin.TASK_START_SCRIPTS_NAME, CreateStartScripts::class.java) {
             // custom start script generator that replaces the JAVACMD with one that maps to the jlink JRE java binary
-            it.unixStartScriptGenerator = JlinkAwareStartScriptGenerator(
-                TextUtil.getUnixLineSeparator(),
-                StartScriptTemplateBindingFactory.unix(),
-                "unixStartScript.txt"
-            )
-            it.windowsStartScriptGenerator = JlinkAwareStartScriptGenerator(
-                TextUtil.getWindowsLineSeparator(),
-                StartScriptTemplateBindingFactory.windows(),
-                "windowsStartScript.txt"
-            )
+            it.unixStartScriptGenerator =
+                JlinkAwareStartScriptGenerator(
+                    TextUtil.getUnixLineSeparator(),
+                    StartScriptTemplateBindingFactory.unix(),
+                    "unixStartScript.txt",
+                )
+            it.windowsStartScriptGenerator =
+                JlinkAwareStartScriptGenerator(
+                    TextUtil.getWindowsLineSeparator(),
+                    StartScriptTemplateBindingFactory.windows(),
+                    "windowsStartScript.txt",
+                )
         }
     }
 }
