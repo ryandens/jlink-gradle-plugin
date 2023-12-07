@@ -5,8 +5,10 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.distribution.DistributionContainer
 import org.gradle.api.distribution.plugins.DistributionPlugin
+import org.gradle.api.internal.plugins.StartScriptTemplateBindingFactory
 import org.gradle.api.plugins.ApplicationPlugin
 import org.gradle.api.tasks.application.CreateStartScripts
+import org.gradle.util.internal.TextUtil
 
 class JlinkJreApplicationDistributionPlugin : Plugin<Project> {
     override fun apply(project: Project) {
@@ -30,8 +32,16 @@ class JlinkJreApplicationDistributionPlugin : Plugin<Project> {
 
         project.tasks.named(ApplicationPlugin.TASK_START_SCRIPTS_NAME, CreateStartScripts::class.java) {
             // custom start script generator that replaces the JAVACMD with one that maps to the jlink JRE java binary
-            it.unixStartScriptGenerator = JlinkAwareUnixStartScriptGenerator()
-            it.windowsStartScriptGenerator = JlinkAwareWindowsStartScriptGenerator()
+            it.unixStartScriptGenerator = JlinkAwareStartScriptGenerator(
+                TextUtil.getUnixLineSeparator(),
+                StartScriptTemplateBindingFactory.unix(),
+                "unixStartScript.txt"
+            )
+            it.windowsStartScriptGenerator = JlinkAwareStartScriptGenerator(
+                TextUtil.getWindowsLineSeparator(),
+                StartScriptTemplateBindingFactory.windows(),
+                "windowsStartScript.txt"
+            )
         }
     }
 }
