@@ -1,0 +1,10 @@
+[versions]
+spotless = "6.23.2"
+
+[libraries]
+kotlin-jvm = { module = "org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin", version = "1.9.21" }
+plugin-publish = { module = "com.gradle.plugin-publish:com.gradle.plugin-publish.gradle.plugin", version = "1.2.1" }
+spotless = { module = "com.diffplug.spotless:com.diffplug.spotless.gradle.plugin", version.ref = "spotless" }
+
+[plugins]
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
