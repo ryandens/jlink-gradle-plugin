@@ -11,4 +11,4 @@ class JlinkAwareStartScriptGenerator(
         lineSeparator,
         bindingFactory,
         utf8ClassPathResource(JlinkAwareStartScriptGenerator::class.java, startScriptTemplateFileName),
-)
+    )
