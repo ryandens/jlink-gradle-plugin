@@ -2,11 +2,14 @@ package com.ryandens.jlink.jib
 
 import org.gradle.internal.impldep.org.apache.commons.compress.archivers.ArchiveStreamFactory
 import org.gradle.internal.impldep.org.apache.commons.compress.archivers.tar.TarArchiveEntry
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.io.FileInputStream
+import java.nio.file.Paths
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertTrue
 
 /**
@@ -30,19 +33,32 @@ class JlinkJibFunctionalTest {
         runner.withProjectDir(projectDir)
         val result = runner.build()
 
-        // Verify the result
-        assertTrue(File(projectDir, "build/jlink-jre/jre/bin/java").exists())
-        assertTrue(result.output.contains("Running extension: com.ryandens.jlink.jib.JlinkJibPlugin"))
-        assertTrue(File(projectDir, "build/jib-image.tar").exists())
+        val javaExecutableFileName = "java" + if (DefaultNativePlatform.getCurrentOperatingSystem().isWindows) ".exe" else ""
 
-        FileInputStream(File(projectDir, "build/jib-image.tar")).use { fis ->
+        // Verify the result
+        assertTrue(
+            File(
+                projectDir,
+                Paths.get(
+                    "build",
+                    "jlink-jre",
+                    "jre",
+                    "bin",
+                    javaExecutableFileName,
+                ).toString(),
+            ).exists(),
+        )
+        assertTrue(result.output.contains("Running extension: com.ryandens.jlink.jib.JlinkJibPlugin"))
+        assertTrue(File(projectDir, Paths.get("build", "jib-image.tar").toString()).exists())
+
+        FileInputStream(File(projectDir, Paths.get("build", "jib-image.tar").toString())).use { fis ->
             ArchiveStreamFactory().createArchiveInputStream("tar", fis).use { ais ->
                 var entry = ais.nextEntry as TarArchiveEntry?
                 while (entry != null) {
                     if ("config.json" == entry.name) {
                         val json = ais.readBytes().toString(Charsets.UTF_8)
                         // verify entrypoint has been replaced with path to jlink java executable
-                        assertTrue(json.contains("/usr/lib/jvm/jlink-jre/jre/bin/java"))
+                        assertContains(json, "/usr/lib/jvm/jlink-jre/jre/bin/java")
                     }
                     entry = ais.nextEntry as TarArchiveEntry?
                 }
@@ -80,7 +96,7 @@ class JlinkJibFunctionalTest {
   """,
         )
 
-        val file = File(projectDir, "src/main/java/com/ryandens/example/")
+        val file = File(projectDir, Paths.get("src", "main", "java", "com", "ryandens", "example").toString())
         file.mkdirs()
         file.resolve("App.java").writeText(
             """
