@@ -3,9 +3,11 @@
  */
 package com.ryandens.jlink
 
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.nio.file.Paths
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -19,6 +21,12 @@ class JlinkApplicationRunPluginFunctionalTest {
     private val buildFile by lazy { projectDir.resolve("build.gradle") }
     private val settingsFile by lazy { projectDir.resolve("settings.gradle") }
 
+    private val executablePostfix = if (DefaultNativePlatform.getCurrentOperatingSystem().isWindows) ".bat" else ""
+
+    private val executablePrefix = if (!DefaultNativePlatform.getCurrentOperatingSystem().isWindows) "./" else ""
+
+    private val javaExecutableFileName = "java${if (DefaultNativePlatform.getCurrentOperatingSystem().isWindows) ".exe" else ""}"
+
     @Test fun `can run with custom jre`() {
         setupProject("\"Hello World\"", "java.base")
 
@@ -31,7 +39,7 @@ class JlinkApplicationRunPluginFunctionalTest {
         val result = runner.build()
 
         // Verify the result
-        assertTrue(File(projectDir, "build/jlink-jre/jre/bin/java").exists())
+        assertTrue(File(projectDir, Paths.get("build", "jlink-jre", "jre", "bin", javaExecutableFileName).toString()).exists())
         assertTrue(result.output.contains("Hello World"))
     }
 
@@ -47,7 +55,7 @@ class JlinkApplicationRunPluginFunctionalTest {
         val result = runner.build()
 
         // Verify the result
-        assertTrue(File(projectDir, "build/jlink-jre/jre/bin/java").exists())
+        assertTrue(File(projectDir, Paths.get("build", "jlink-jre", "jre", "bin", javaExecutableFileName).toString()).exists())
         assertTrue(result.output.contains("Hello World"))
         assertTrue(result.output.contains("Configuration cache entry stored."))
 
@@ -73,7 +81,7 @@ class JlinkApplicationRunPluginFunctionalTest {
         val result = runner.buildAndFail()
 
         // Verify the result
-        assertTrue(File(projectDir, "build/jlink-jre/jre/bin/java").exists())
+        assertTrue(File(projectDir, Paths.get("build", "jlink-jre", "jre", "bin", javaExecutableFileName).toString()).exists())
         assertTrue(result.output.contains("java.lang.NoClassDefFoundError: java/sql/Statement"))
     }
 
@@ -88,7 +96,7 @@ class JlinkApplicationRunPluginFunctionalTest {
         val result = runner.build()
 
         // Verify the result
-        assertTrue(File(projectDir, "build/jlink-jre/jre/bin/java").exists())
+        assertTrue(File(projectDir, Paths.get("build", "jlink-jre", "jre", "bin", javaExecutableFileName).toString()).exists())
         assertTrue(result.output.contains("java.sql.Statement"))
     }
 
@@ -104,7 +112,9 @@ class JlinkApplicationRunPluginFunctionalTest {
         val result = runner.build()
 
         // Verify the result
-        assertTrue(File(projectDir, "build/install/${projectDir.name}/jre/bin/java").exists())
+        assertTrue(
+            File(projectDir, Paths.get("build", "install", projectDir.name, "jre", "bin", javaExecutableFileName).toString()).exists(),
+        )
         assertTrue(result.output.contains("java.sql.Statement"))
     }
 
@@ -120,7 +130,9 @@ class JlinkApplicationRunPluginFunctionalTest {
         val result = runner.build()
 
         // Verify the result
-        assertTrue(File(projectDir, "build/install/${projectDir.name}/jre/bin/java").exists())
+        assertTrue(
+            File(projectDir, Paths.get("build", "install", projectDir.name, "jre", "bin", javaExecutableFileName).toString()).exists(),
+        )
         assertTrue(result.output.contains("java.sql.Statement"))
         assertTrue(result.output.contains("Configuration cache entry stored."))
 
@@ -147,7 +159,9 @@ class JlinkApplicationRunPluginFunctionalTest {
         val result = runner.buildAndFail()
 
         // Verify the result
-        assertTrue(File(projectDir, "build/install/${projectDir.name}/jre/bin/java").exists())
+        assertTrue(
+            File(projectDir, Paths.get("build", "install", projectDir.name, "jre", "bin", javaExecutableFileName).toString()).exists(),
+        )
         assertTrue(result.output.contains("java.lang.NoClassDefFoundError: java/sql/Statement"))
     }
 
@@ -180,8 +194,8 @@ class JlinkApplicationRunPluginFunctionalTest {
   
   task execStartScript(type: Exec) {
     dependsOn('installDist')
-    workingDir '${projectDir.canonicalPath}/build/install/${projectDir.name}/bin/'
-    commandLine './${projectDir.name}'
+    workingDir layout.buildDirectory.dir('install/${projectDir.name}/bin/')
+    commandLine ${if (DefaultNativePlatform.getCurrentOperatingSystem().isWindows) "'cmd', '/c', '${projectDir.name}.bat'" else "'./${projectDir.name}'"}
   }
   """,
         )
