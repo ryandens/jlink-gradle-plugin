@@ -4,6 +4,7 @@ pluginManagement {
 
 plugins {
   id("com.gradle.enterprise") version "3.16.2"
+  id("com.gradle.common-custom-user-data-gradle-plugin") version "1.12.1"
 }
 
 rootProject.name = "jlink-gradle-plugin"
