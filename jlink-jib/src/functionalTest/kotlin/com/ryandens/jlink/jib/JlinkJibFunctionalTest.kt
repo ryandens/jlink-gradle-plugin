@@ -1,5 +1,6 @@
 package com.ryandens.jlink.jib
 
+import org.gradle.internal.impldep.org.apache.commons.compress.archivers.ArchiveInputStream
 import org.gradle.internal.impldep.org.apache.commons.compress.archivers.ArchiveStreamFactory
 import org.gradle.internal.impldep.org.apache.commons.compress.archivers.tar.TarArchiveEntry
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
@@ -52,15 +53,15 @@ class JlinkJibFunctionalTest {
         assertTrue(File(projectDir, Paths.get("build", "jib-image.tar").toString()).exists())
 
         FileInputStream(File(projectDir, Paths.get("build", "jib-image.tar").toString())).use { fis ->
-            ArchiveStreamFactory().createArchiveInputStream("tar", fis).use { ais ->
-                var entry = ais.nextEntry as TarArchiveEntry?
+            ArchiveStreamFactory().createArchiveInputStream<ArchiveInputStream<TarArchiveEntry>>("tar", fis).use { ais ->
+                var entry = ais.nextEntry
                 while (entry != null) {
                     if ("config.json" == entry.name) {
                         val json = ais.readBytes().toString(Charsets.UTF_8)
                         // verify entrypoint has been replaced with path to jlink java executable
                         assertContains(json, "/usr/lib/jvm/jlink-jre/jre/bin/java")
                     }
-                    entry = ais.nextEntry as TarArchiveEntry?
+                    entry = ais.nextEntry
                 }
             }
         }
