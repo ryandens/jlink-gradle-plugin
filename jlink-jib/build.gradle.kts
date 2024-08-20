@@ -11,7 +11,7 @@ dependencies {
     implementation(project(":jlink-gradle"))
     implementation("com.google.cloud.tools:jib-gradle-plugin-extension-api:0.4.0")
     implementation("com.google.cloud.tools.jib:com.google.cloud.tools.jib.gradle.plugin:3.4.3")
-    testImplementation("org.apache.commons:commons-compress:1.26.2")
+    testImplementation("org.apache.commons:commons-compress:1.27.1")
 }
 
 gradlePlugin {
