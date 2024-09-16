@@ -3,7 +3,7 @@ pluginManagement {
 }
 
 plugins {
-  id("com.gradle.enterprise") version "3.18.1"
+  id("com.gradle.develocity") version "3.18.1"
   id("com.gradle.common-custom-user-data-gradle-plugin") version "2.0.2"
 }
 
@@ -12,21 +12,17 @@ include("jlink-gradle")
 include("jlink-jib")
 include("temurin-binaries-repository")
 
+val isCI = providers.environmentVariable("CI").isPresent
 
-val isCI = System.getenv("CI") != null
-
-gradleEnterprise {
+develocity {
   buildScan {
-    termsOfServiceUrl = "https://gradle.com/terms-of-service"
-    termsOfServiceAgree = "yes"
-    isUploadInBackground = !isCI
-
+    termsOfUseUrl.set("https://gradle.com/help/legal-terms-of-use")
+    termsOfUseAgree.set("yes")
+    uploadInBackground.set(isCI)
     if (isCI) {
-      publishAlways()
-    }
-
-    capture {
-      isTaskInputFiles = true
+      publishing {
+        onlyIf { true }
+      }
     }
   }
 }
