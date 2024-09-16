@@ -26,7 +26,7 @@ jlink java binary rather than the java binary discovered relative on the host.
 ```kotlin
 plugins {
   application
-  id("com.ryandens.jlink-application") version "0.4.0"
+  id("com.ryandens.jlink-application") version "0.4.1"
 }
 
 java {
@@ -61,7 +61,7 @@ with the latest released image sha.
 plugins {
   application
   id("com.google.cloud.tools.jib") version "3.3.1"
-  id("com.ryandens.jlink-jib") version "0.4.0"
+  id("com.ryandens.jlink-jib") version "0.4.1"
 }
 
 java {
@@ -97,8 +97,8 @@ output as the source of the JRE that will be inserted into the container image.
 ```kotlin
 plugins {
   application
-  id("com.ryandens.jlink-jib") version "0.4.0"
-  id("com.ryandens.temurin-binaries-repository") version "0.4.0"
+  id("com.ryandens.jlink-jib") version "0.4.1"
+  id("com.ryandens.temurin-binaries-repository") version "0.4.1"
 }
 
 val jdk by configurations.creating {
@@ -155,7 +155,7 @@ build directory of the project.
 ```kotlin
 plugins {
   java
-  id("com.ryandens.jlink-jre") version "0.4.0"
+  id("com.ryandens.jlink-jre") version "0.4.1"
 }
 
 java {
