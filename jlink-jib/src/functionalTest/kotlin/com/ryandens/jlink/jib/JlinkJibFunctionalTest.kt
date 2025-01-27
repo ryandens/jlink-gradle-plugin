@@ -40,13 +40,14 @@ class JlinkJibFunctionalTest {
         assertTrue(
             File(
                 projectDir,
-                Paths.get(
-                    "build",
-                    "jlink-jre",
-                    "jre",
-                    "bin",
-                    javaExecutableFileName,
-                ).toString(),
+                Paths
+                    .get(
+                        "build",
+                        "jlink-jre",
+                        "jre",
+                        "bin",
+                        javaExecutableFileName,
+                    ).toString(),
             ).exists(),
         )
         assertTrue(result.output.contains("Running extension: com.ryandens.jlink.jib.JlinkJibPlugin"))

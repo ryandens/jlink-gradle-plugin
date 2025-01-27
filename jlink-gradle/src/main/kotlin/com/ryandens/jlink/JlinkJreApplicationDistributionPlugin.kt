@@ -16,12 +16,17 @@ class JlinkJreApplicationDistributionPlugin : Plugin<Project> {
         project.pluginManager.apply(JlinkJrePlugin::class.java)
 
         val jlinkJreOutput =
-            project.tasks.named(
-                JlinkJrePlugin.JLINK_JRE_TASK_NAME,
-                JlinkJreTask::class.java,
-            ).get().outputDirectory.dir("jre")
+            project.tasks
+                .named(
+                    JlinkJrePlugin.JLINK_JRE_TASK_NAME,
+                    JlinkJreTask::class.java,
+                ).get()
+                .outputDirectory
+                .dir("jre")
 
-        project.extensions.getByType(DistributionContainer::class.java).named(DistributionPlugin.MAIN_DISTRIBUTION_NAME)
+        project.extensions
+            .getByType(DistributionContainer::class.java)
+            .named(DistributionPlugin.MAIN_DISTRIBUTION_NAME)
             .configure { distribution ->
                 distribution.contents { copy ->
                     copy.from(jlinkJreOutput) {

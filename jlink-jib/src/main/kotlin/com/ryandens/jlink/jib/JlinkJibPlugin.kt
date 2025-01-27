@@ -17,10 +17,10 @@ import org.gradle.api.Project
 import java.nio.file.attribute.PosixFilePermission
 import java.util.Optional
 
-class JlinkJibPlugin : JibGradlePluginExtension<Void>, Plugin<Project> {
-    override fun getExtraConfigType(): Optional<Class<Void>> {
-        return Optional.empty()
-    }
+class JlinkJibPlugin :
+    JibGradlePluginExtension<Void>,
+    Plugin<Project> {
+    override fun getExtraConfigType(): Optional<Class<Void>> = Optional.empty()
 
     override fun extendContainerBuildPlan(
         buildPlan: ContainerBuildPlan?,
@@ -45,15 +45,23 @@ class JlinkJibPlugin : JibGradlePluginExtension<Void>, Plugin<Project> {
 
         // create jlink layer
         val entries =
-            jlinkJreOutput.get().asFileTree.files.map {
-                FileEntry(
-                    it.toPath(),
-                    AbsoluteUnixPath.get("$jreInstallationDirectory${it.toRelativeString(jlinkJreOutput.get().asFile)}"),
-                    FilePermissions.fromPosixFilePermissions(jlinkJibPluginExtension.jrePosixFilePermissions.get()),
-                    FileEntriesLayer.DEFAULT_MODIFICATION_TIME,
-                )
-            }.toMutableList()
-        val jlinkLayer = FileEntriesLayer.builder().setName("jlink").setEntries(entries).build()
+            jlinkJreOutput
+                .get()
+                .asFileTree.files
+                .map {
+                    FileEntry(
+                        it.toPath(),
+                        AbsoluteUnixPath.get("$jreInstallationDirectory${it.toRelativeString(jlinkJreOutput.get().asFile)}"),
+                        FilePermissions.fromPosixFilePermissions(jlinkJibPluginExtension.jrePosixFilePermissions.get()),
+                        FileEntriesLayer.DEFAULT_MODIFICATION_TIME,
+                    )
+                }.toMutableList()
+        val jlinkLayer =
+            FileEntriesLayer
+                .builder()
+                .setName("jlink")
+                .setEntries(entries)
+                .build()
         val layers = mutableListOf<LayerObject>()
         layers.addAll(buildPlan.layers)
         layers.add(1, jlinkLayer)
