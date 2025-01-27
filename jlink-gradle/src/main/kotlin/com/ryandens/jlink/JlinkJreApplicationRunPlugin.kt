@@ -16,8 +16,7 @@ class JlinkJreApplicationRunPlugin : Plugin<Project> {
             it.inputs.dir(jlinkOutput)
             it.javaLauncher.set(
                 JlinkJavaLauncher(
-                    jlinkJreTask.javaCompiler.map {
-                            javaCompiler ->
+                    jlinkJreTask.javaCompiler.map { javaCompiler ->
                         javaCompiler.metadata
                     },
                     jlinkJreTask.outputDirectory.file("jre/bin/java"),

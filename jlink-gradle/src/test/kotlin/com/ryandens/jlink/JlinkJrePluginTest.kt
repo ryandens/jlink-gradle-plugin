@@ -18,6 +18,11 @@ class JlinkJrePluginTest {
         // Verify the result
         val jlinkJreTask = project.tasks.getByName("jlinkJre") as JlinkJreTask
         assertNotNull(jlinkJreTask)
-        assertEquals("jmods", jlinkJreTask.modulePath.get().asFile.name)
+        assertEquals(
+            "jmods",
+            jlinkJreTask.modulePath
+                .get()
+                .asFile.name,
+        )
     }
 }

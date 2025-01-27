@@ -9,11 +9,7 @@ class JlinkJavaLauncher(
     private val metadata: Provider<JavaInstallationMetadata>,
     private val executablePath: Provider<RegularFile>,
 ) : JavaLauncher {
-    override fun getMetadata(): JavaInstallationMetadata {
-        return metadata.get()
-    }
+    override fun getMetadata(): JavaInstallationMetadata = metadata.get()
 
-    override fun getExecutablePath(): RegularFile {
-        return executablePath.get()
-    }
+    override fun getExecutablePath(): RegularFile = executablePath.get()
 }

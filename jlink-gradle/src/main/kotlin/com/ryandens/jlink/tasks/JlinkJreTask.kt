@@ -60,7 +60,12 @@ abstract class JlinkJreTask : AbstractExecTask<JlinkJreTask> {
     }
 
     override fun exec() {
-        setExecutable(javaCompiler.get().metadata.installationPath.file("bin/jlink"))
+        setExecutable(
+            javaCompiler
+                .get()
+                .metadata.installationPath
+                .file("bin/jlink"),
+        )
         val jlinkOutput = outputDirectory.dir("jre").get().asFile
         jlinkOutput.deleteRecursively() // jlink expects the output directory to not exist when it runs
 

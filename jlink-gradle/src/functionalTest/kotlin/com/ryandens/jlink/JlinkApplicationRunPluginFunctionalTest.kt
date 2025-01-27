@@ -60,11 +60,13 @@ class JlinkApplicationRunPluginFunctionalTest {
         assertTrue(result.output.contains("Configuration cache entry stored."))
 
         val ccResult =
-            GradleRunner.create()
+            GradleRunner
+                .create()
                 .forwardOutput()
                 .withPluginClasspath()
                 .withArguments("--configuration-cache", "run")
-                .withProjectDir(projectDir).build()
+                .withProjectDir(projectDir)
+                .build()
 
         // verify the configuration cache is used
         assertTrue(ccResult.output.contains("Reusing configuration cache."))
@@ -137,11 +139,13 @@ class JlinkApplicationRunPluginFunctionalTest {
         assertTrue(result.output.contains("Configuration cache entry stored."))
 
         val ccResult =
-            GradleRunner.create()
+            GradleRunner
+                .create()
                 .forwardOutput()
                 .withPluginClasspath()
                 .withArguments("--configuration-cache", "installDist", "execStartScript")
-                .withProjectDir(projectDir).build()
+                .withProjectDir(projectDir)
+                .build()
 
         // verify the configuration cache is used
         assertTrue(ccResult.output.contains("Reusing configuration cache."))
