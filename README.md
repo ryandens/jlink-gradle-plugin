@@ -47,7 +47,7 @@ jlinkJre {
 
 ## Jlink Jib plugin usage
 
-This Gradle plugin tightly integrates with the [the [jib-gradle-plugin](https://github.com/GoogleContainerTools/jib/tree/master/jib-gradle-plugin)
+This Gradle plugin tightly integrates with the [jib-gradle-plugin](https://github.com/GoogleContainerTools/jib/tree/master/jib-gradle-plugin)
 via the [jib-extensions](https://github.com/GoogleContainerTools/jib-extensions) API to make building container images 
 via Gradle with jlink-created JREs easy. This plugin adds the JRE created by `jlink-jre` plugin as a separate layer of 
 your container image and modify the entrypoint of your application to use the `java` executable from the custom JRE 
