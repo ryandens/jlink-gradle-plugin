@@ -1,5 +1,5 @@
 [versions]
-spotless = "7.2.1"
+spotless = "8.0.0"
 
 [libraries]
 kotlin-jvm = { module = "org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin", version = "1.9.25" }
