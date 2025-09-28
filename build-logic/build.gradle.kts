@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     `kotlin-dsl`
     alias(libs.plugins.spotless)
@@ -7,16 +9,13 @@ repositories {
     gradlePluginPortal()
 }
 
-// Kotlin DSL plugin and jetbrains can't seem to target java 21 for kotlin compilation yet
-val jdkBytecodeTargetForBuildLogic = 17
 tasks.compileJava {
-    options.release.set(jdkBytecodeTargetForBuildLogic)
+    options.release.set(17)
 }
 
 tasks.compileKotlin {
-    kotlinOptions {
-        // kotlin convert integer into a string
-        jvmTarget = "$jdkBytecodeTargetForBuildLogic"
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
     }
 }
 
