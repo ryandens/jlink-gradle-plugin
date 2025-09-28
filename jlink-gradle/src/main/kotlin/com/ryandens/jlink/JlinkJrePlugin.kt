@@ -37,7 +37,6 @@ class JlinkJrePlugin : Plugin<Project> {
         project.configurations.create("jlinkJre") {
             it.isCanBeConsumed = true
             it.isCanBeResolved = false
-            it.isVisible = false
             it.attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, "jlink-jre"))
             it.outgoing.artifact(
                 jlinkJreTask.flatMap { jreTask ->
