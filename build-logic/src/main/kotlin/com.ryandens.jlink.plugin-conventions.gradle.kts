@@ -40,7 +40,7 @@ gradlePlugin {
 }
 
 group = "com.ryandens"
-version = "0.4.1"
+version = "0.5.0"
 
 spotless {
     kotlin {
