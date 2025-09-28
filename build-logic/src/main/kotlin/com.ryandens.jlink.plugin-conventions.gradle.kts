@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -25,7 +26,7 @@ tasks.withType<JavaCompile> {
 }
 
 tasks.withType<KotlinCompile> {
-    this.kotlinOptions.jvmTarget = "$jdkByteCodeTarget"
+    compilerOptions.jvmTarget.set(JvmTarget.fromTarget("$jdkByteCodeTarget"))
 }
 
 dependencies {
