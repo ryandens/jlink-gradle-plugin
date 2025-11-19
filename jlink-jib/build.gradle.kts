@@ -10,7 +10,7 @@ description =
 dependencies {
     implementation(project(":jlink-gradle"))
     implementation("com.google.cloud.tools:jib-gradle-plugin-extension-api:0.4.0")
-    implementation("com.google.cloud.tools.jib:com.google.cloud.tools.jib.gradle.plugin:3.5.0")
+    implementation("com.google.cloud.tools.jib:com.google.cloud.tools.jib.gradle.plugin:3.5.1")
     testImplementation("org.apache.commons:commons-compress:1.28.0")
 }
 
