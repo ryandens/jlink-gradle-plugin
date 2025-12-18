@@ -16,7 +16,6 @@ class JlinkJrePlugin : Plugin<Project> {
         val extension =
             project.extensions.create(JlinkJreExtension.NAME, JlinkJreExtension::class.java).apply {
                 modules.convention(listOf("java.base"))
-                compress.convention(2)
                 stripDebug.convention(true)
                 noHeaderFiles.convention(true)
                 noManPages.convention(true)
@@ -27,7 +26,9 @@ class JlinkJrePlugin : Plugin<Project> {
 
         project.tasks.withType(JlinkJreTask::class.java).configureEach {
             it.modules.set(extension.modules)
+            @Suppress("DEPRECATION")
             it.compress.set(extension.compress)
+            it.zipCompress.set(extension.zipCompress)
             it.stripDebug.set(extension.stripDebug)
             it.noHeaderFiles.set(extension.noHeaderFiles)
             it.noManPages.set(extension.noManPages)
