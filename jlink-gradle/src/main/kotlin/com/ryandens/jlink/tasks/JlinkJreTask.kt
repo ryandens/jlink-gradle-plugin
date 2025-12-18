@@ -1,6 +1,7 @@
 package com.ryandens.jlink.tasks
 
 import com.ryandens.jlink.JlinkJreExtension
+import org.gradle.api.GradleException
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.ListProperty
@@ -9,6 +10,7 @@ import org.gradle.api.tasks.AbstractExecTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.jvm.toolchain.JavaCompiler
 import org.gradle.jvm.toolchain.JavaToolchainService
@@ -21,8 +23,17 @@ abstract class JlinkJreTask : AbstractExecTask<JlinkJreTask> {
     @get:Input
     abstract val modules: ListProperty<String>
 
+    @Deprecated(
+        message = "The 'compress' property is deprecated. Use the new compression configuration instead. To be removed in September 2026",
+        replaceWith = ReplaceWith("zipCompress"),
+    )
     @get:Input
+    @get:Optional
     abstract val compress: Property<Int>
+
+    @get:Input
+    @get:Optional
+    abstract val zipCompress: Property<JlinkJreExtension.Compress>
 
     @get:Input
     abstract val stripDebug: Property<Boolean>
@@ -59,7 +70,11 @@ abstract class JlinkJreTask : AbstractExecTask<JlinkJreTask> {
         outputDirectory.convention(project.layout.buildDirectory.dir("jlink-jre"))
     }
 
+    @Suppress("DEPRECATION")
     override fun exec() {
+        if (compress.isPresent && zipCompress.isPresent) {
+            throw GradleException("Only one of 'compress' or 'zipCompress' should be set.")
+        }
         setExecutable(
             javaCompiler
                 .get()
@@ -77,12 +92,26 @@ abstract class JlinkJreTask : AbstractExecTask<JlinkJreTask> {
                         modulePath.get().asFile.absolutePath,
                         "--add-modules",
                         modules.get().joinToString(","),
-                        "--compress",
-                        "${compress.get()}",
                         "--output",
                         jlinkOutput.absolutePath,
                     ),
                 )
+
+                if (compress.isPresent) {
+                    add("--compress")
+                    add("${compress.get()}")
+                }
+
+                if (zipCompress.isPresent) {
+                    add("--compress")
+                    add(
+                        zipCompress
+                            .get()
+                            .toString()
+                            .lowercase()
+                            .replace("_", "-"),
+                    )
+                }
 
                 if (stripDebug.get()) {
                     add("--strip-debug")
