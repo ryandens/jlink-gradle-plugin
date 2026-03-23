@@ -21,6 +21,10 @@ java {
     }
 }
 
+dependencies {
+    testImplementation(gradleApi())
+}
+
 val jdkByteCodeTarget = 11
 tasks.withType<JavaCompile> {
     options.release.set(jdkByteCodeTarget)
