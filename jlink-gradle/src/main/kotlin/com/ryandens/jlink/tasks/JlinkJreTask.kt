@@ -7,15 +7,20 @@ import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.AbstractExecTask
+import org.gradle.api.tasks.CacheableTask
+import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.jvm.toolchain.JavaCompiler
 import org.gradle.jvm.toolchain.JavaToolchainService
 import javax.inject.Inject
 
+@CacheableTask
 abstract class JlinkJreTask : AbstractExecTask<JlinkJreTask> {
     @get:Nested
     abstract val javaCompiler: Property<JavaCompiler>
@@ -48,6 +53,7 @@ abstract class JlinkJreTask : AbstractExecTask<JlinkJreTask> {
     abstract val endian: Property<JlinkJreExtension.Endian>
 
     @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
     abstract val modulePath: DirectoryProperty
 
     @get:OutputDirectory
