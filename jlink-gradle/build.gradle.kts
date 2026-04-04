@@ -1,3 +1,5 @@
+import org.gradle.plugin.compatibility.compatibility
+
 plugins {
     id("com.ryandens.jlink.plugin-conventions")
 }
@@ -16,6 +18,11 @@ gradlePlugin {
         displayName = "jlink application jre plugin"
         description = "Creates a minimal java runtime using jlink"
         tags.set(listOf("jlink"))
+        compatibility {
+            features {
+                configurationCache = true
+            }
+        }
     }
     val jlinkApplicationRun by plugins.creating {
         id = "com.ryandens.jlink-application-run"
@@ -23,6 +30,11 @@ gradlePlugin {
         displayName = "jlink application run plugin"
         description = "Configures the run task to use the jlink java binary as its java launcher"
         tags.set(listOf("jlink", "application"))
+        compatibility {
+            features {
+                configurationCache = true
+            }
+        }
     }
     val jlinkApplicationDistribution by plugins.creating {
         id = "com.ryandens.jlink-application-distribution"
@@ -30,6 +42,11 @@ gradlePlugin {
         displayName = "jlink application distribution plugin"
         description = "Modifies application distribution to use a minimal java runtime built with jlink."
         tags.set(listOf("jlink", "application"))
+        compatibility {
+            features {
+                configurationCache = true
+            }
+        }
     }
     val jlinkApplication by plugins.creating {
         id = "com.ryandens.jlink-application"
@@ -37,5 +54,10 @@ gradlePlugin {
         displayName = "jlink application plugin"
         description = "Modifies application plugin to integrate with jlink"
         tags.set(listOf("jlink", "application"))
+        compatibility {
+            features {
+                configurationCache = true
+            }
+        }
     }
 }

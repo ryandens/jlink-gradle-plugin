@@ -30,4 +30,5 @@ dependencies {
     implementation(libs.kotlin.jvm)
     implementation(libs.plugin.publish)
     implementation(libs.spotless)
+    implementation(libs.gradle.compatibility.plugin)
 }
