@@ -1,3 +1,5 @@
+import org.gradle.plugin.compatibility.compatibility
+
 plugins {
     id("com.ryandens.jlink.plugin-conventions")
 }
@@ -19,5 +21,10 @@ gradlePlugin {
             Defines an ivy repository for Gradle projects to enable builds to consume binaries released by the Eclipse Adoptium GitHub account
             """.trimIndent()
         tags.set(listOf("temurin", "jdk"))
+        compatibility {
+            features {
+                configurationCache = true
+            }
+        }
     }
 }
