@@ -71,7 +71,11 @@ abstract class JlinkJreTask : AbstractExecTask<JlinkJreTask> {
         // use it as our default for the property
         javaCompiler.convention(defaultJlinkTool)
         modules.convention(listOf("java.base"))
-        modulePath.convention(javaCompiler.map { it.metadata.installationPath.dir("jmods") })
+        modulePath.convention(
+            javaCompiler.map {
+                it.metadata.installationPath.dir("jmods")
+            },
+        )
 
         outputDirectory.convention(project.layout.buildDirectory.dir("jlink-jre"))
     }
@@ -92,10 +96,16 @@ abstract class JlinkJreTask : AbstractExecTask<JlinkJreTask> {
 
         args =
             buildList {
+                if (modulePath.isPresent) {
+                    addAll(
+                        listOf(
+                            "--module-path",
+                            modulePath.get().asFile.absolutePath,
+                        ),
+                    )
+                }
                 addAll(
                     listOf(
-                        "--module-path",
-                        modulePath.get().asFile.absolutePath,
                         "--add-modules",
                         modules.get().joinToString(","),
                         "--output",
