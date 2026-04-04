@@ -17,7 +17,7 @@ repositories {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
+        languageVersion.set(JavaLanguageVersion.of(25))
     }
 }
 
@@ -45,7 +45,7 @@ gradlePlugin {
 }
 
 group = "com.ryandens"
-version = "0.6.0"
+version = "0.7.0"
 
 spotless {
     kotlin {
