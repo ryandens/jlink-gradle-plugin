@@ -54,6 +54,7 @@ abstract class JlinkJreTask : AbstractExecTask<JlinkJreTask> {
 
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:Optional
     abstract val modulePath: DirectoryProperty
 
     @get:OutputDirectory
@@ -73,7 +74,12 @@ abstract class JlinkJreTask : AbstractExecTask<JlinkJreTask> {
         modules.convention(listOf("java.base"))
         modulePath.convention(
             javaCompiler.map {
-                it.metadata.installationPath.dir("jmods")
+                if (it.metadata.languageVersion.asInt() >= 24) {
+                    // on JDK 24 and up, no jmods dir is needed due to https://openjdk.org/jeps/493
+                    null
+                } else {
+                    it.metadata.installationPath.dir("jmods")
+                }
             },
         )
 
