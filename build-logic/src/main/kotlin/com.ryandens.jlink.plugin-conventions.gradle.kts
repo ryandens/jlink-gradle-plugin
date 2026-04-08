@@ -54,6 +54,9 @@ spotless {
     kotlinGradle {
         ktlint()
     }
+    java {
+        googleJavaFormat()
+    }
 }
 
 testing {
