@@ -12,6 +12,7 @@ plugins {
 
 repositories {
     mavenCentral()
+    mavenLocal()
     gradlePluginPortal()
 }
 
@@ -45,7 +46,7 @@ gradlePlugin {
 }
 
 group = "com.ryandens"
-version = "0.7.0"
+version = "0.8.0-rc1"
 
 spotless {
     kotlin {
