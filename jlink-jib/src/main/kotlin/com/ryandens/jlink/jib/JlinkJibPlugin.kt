@@ -16,6 +16,7 @@ import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import tel.schich.tinyjib.TinyJibExtension
 import java.nio.file.attribute.PosixFilePermission
 import java.util.Optional
 
@@ -73,8 +74,8 @@ class JlinkJibPlugin :
     }
 
     override fun apply(project: Project) {
-        checkNotNull(project.pluginManager.hasPlugin("com.google.cloud.tools.jib")) {
-            "Jlink Jib plugin requires the Jib plugin to have been applied"
+        check(project.pluginManager.hasPlugin("com.google.cloud.tools.jib") || project.pluginManager.hasPlugin("tel.schich.tinyjib")) {
+            "Jlink Jib plugin requires the Jib or Tiny Jib plugin to have been applied"
         }
 
         project.pluginManager.apply(JlinkJrePlugin::class.java)
@@ -87,17 +88,42 @@ class JlinkJibPlugin :
             },
         )
 
-        listOf("jib", "jibDockerBuild", "jibBuildTar").forEach { jibTaskName ->
-            project.tasks.named(jibTaskName) { jibTask ->
-                jibTask.inputs.dir(extension.jlinkJre)
+        if (project.pluginManager.hasPlugin("com.google.cloud.tools.jib")) {
+            listOf("jib", "jibDockerBuild", "jibBuildTar").forEach { jibTaskName ->
+                project.tasks.named(jibTaskName) { jibTask ->
+                    jibTask.inputs.dir(extension.jlinkJre)
+                }
             }
+        } else if (project.pluginManager.hasPlugin("tel.schich.tinyjib")) {
+            listOf("tinyJibPublish", "tinyJibDocker", "tinyJibTar").forEach { jibTaskName ->
+                project.tasks.named(jibTaskName) { jibTask ->
+                    jibTask.inputs.dir(extension.jlinkJre)
+                }
+            }
+        } else {
+            throw IllegalStateException("Should not be possible")
         }
 
         val jlinkJibPluginExtension = project.extensions.getByType(JlinkJibPluginExtension::class.java)
         jlinkJibPluginExtension.jrePosixFilePermissions
 
         // configure the jib extension
-        val jibExtension: JibExtension? = project.extensions.findByType(JibExtension::class.java)
+        val tinyJibExtension: TinyJibExtension? = project.extensions.findByType(TinyJibExtension::class.java)
+
+        tinyJibExtension?.pluginExtensions {
+            extension {
+                extensionClass.set("com.ryandens.jlink.jib.JlinkJibPlugin")
+                extraConfiguration.set(
+                    Action<Configuration> { configuration ->
+                        configuration.jlinkJre.set(jlinkJibPluginExtension.jlinkJre)
+                        configuration.posixPermissions.set(jlinkJibPluginExtension.jrePosixFilePermissions)
+                    },
+                )
+            }
+        }
+
+        val jibExtension:
+            JibExtension? = project.extensions.findByType(JibExtension::class.java)
         jibExtension?.pluginExtensions { extensionParametersSpec ->
             extensionParametersSpec.pluginExtension { extension ->
                 extension.implementation = "com.ryandens.jlink.jib.JlinkJibPlugin"
