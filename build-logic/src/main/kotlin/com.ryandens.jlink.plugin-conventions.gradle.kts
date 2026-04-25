@@ -45,7 +45,7 @@ gradlePlugin {
 }
 
 group = "com.ryandens"
-version = "0.7.0"
+version = "0.8.0"
 
 spotless {
     kotlin {
@@ -53,6 +53,9 @@ spotless {
     }
     kotlinGradle {
         ktlint()
+    }
+    java {
+        googleJavaFormat()
     }
 }
 

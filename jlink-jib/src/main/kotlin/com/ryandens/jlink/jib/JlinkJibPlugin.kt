@@ -12,29 +12,33 @@ import com.google.cloud.tools.jib.gradle.extension.JibGradlePluginExtension
 import com.google.cloud.tools.jib.plugins.extension.ExtensionLogger
 import com.ryandens.jlink.JlinkJrePlugin
 import com.ryandens.jlink.tasks.JlinkJreTask
+import org.gradle.api.Action
+import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.nio.file.attribute.PosixFilePermission
 import java.util.Optional
 
 class JlinkJibPlugin :
-    JibGradlePluginExtension<Void>,
+    JibGradlePluginExtension<Configuration>,
     Plugin<Project> {
-    override fun getExtraConfigType(): Optional<Class<Void>> = Optional.empty()
+    override fun getExtraConfigType(): Optional<Class<Configuration>> = Optional.of(Configuration::class.java)
 
     override fun extendContainerBuildPlan(
-        buildPlan: ContainerBuildPlan?,
-        properties: MutableMap<String, String>?,
-        extraConfig: Optional<Void>?,
+        buildPlan: ContainerBuildPlan,
+        properties: MutableMap<String, String>,
+        extraConfig: Optional<Configuration>,
         gradleData: GradleData?,
         logger: ExtensionLogger?,
     ): ContainerBuildPlan {
-        checkNotNull(buildPlan)
         val entrypoint = checkNotNull(buildPlan.entrypoint)
 
-        val project = gradleData!!.project
-        val jlinkJibPluginExtension = project.extensions.getByType(JlinkJibPluginExtension::class.java)
-        val jlinkJreOutput = jlinkJibPluginExtension.jlinkJre
+        if (extraConfig.isEmpty) {
+            throw GradleException("Jlink plugin applied to an entrypoint must be configured")
+        }
+
+        val configuration = extraConfig.get()
+        val jlinkJreOutput = configuration.jlinkJre
         val jreInstallationDirectory = "/usr/lib/jvm/jlink-jre/"
         val planBuilder = buildPlan.toBuilder()
 
@@ -52,7 +56,7 @@ class JlinkJibPlugin :
                     FileEntry(
                         it.toPath(),
                         AbsoluteUnixPath.get("$jreInstallationDirectory${it.toRelativeString(jlinkJreOutput.get().asFile)}"),
-                        FilePermissions.fromPosixFilePermissions(jlinkJibPluginExtension.jrePosixFilePermissions.get()),
+                        FilePermissions.fromPosixFilePermissions(configuration.posixPermissions.get()),
                         FileEntriesLayer.DEFAULT_MODIFICATION_TIME,
                     )
                 }.toMutableList()
@@ -89,11 +93,20 @@ class JlinkJibPlugin :
             }
         }
 
+        val jlinkJibPluginExtension = project.extensions.getByType(JlinkJibPluginExtension::class.java)
+        jlinkJibPluginExtension.jrePosixFilePermissions
+
         // configure the jib extension
         val jibExtension: JibExtension? = project.extensions.findByType(JibExtension::class.java)
         jibExtension?.pluginExtensions { extensionParametersSpec ->
-            extensionParametersSpec.pluginExtension {
-                it.implementation = "com.ryandens.jlink.jib.JlinkJibPlugin"
+            extensionParametersSpec.pluginExtension { extension ->
+                extension.implementation = "com.ryandens.jlink.jib.JlinkJibPlugin"
+                extension.configuration(
+                    Action<Configuration> { configuration ->
+                        configuration.jlinkJre.set(jlinkJibPluginExtension.jlinkJre)
+                        configuration.posixPermissions.set(jlinkJibPluginExtension.jrePosixFilePermissions)
+                    },
+                )
             }
         }
     }
