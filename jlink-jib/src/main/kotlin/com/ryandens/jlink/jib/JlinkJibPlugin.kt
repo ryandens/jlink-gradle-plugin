@@ -73,8 +73,8 @@ class JlinkJibPlugin :
     }
 
     override fun apply(project: Project) {
-        checkNotNull(project.pluginManager.hasPlugin("com.google.cloud.tools.jib")) {
-            "Jlink Jib plugin requires the Jib plugin to have been applied"
+        check(project.pluginManager.hasPlugin("com.google.cloud.tools.jib") || project.pluginManager.hasPlugin("tel.schich.tinyjib")) {
+            "Jlink Jib plugin requires the Jib or Tiny Jib plugin to have been applied"
         }
 
         project.pluginManager.apply(JlinkJrePlugin::class.java)
@@ -87,10 +87,20 @@ class JlinkJibPlugin :
             },
         )
 
-        listOf("jib", "jibDockerBuild", "jibBuildTar").forEach { jibTaskName ->
-            project.tasks.named(jibTaskName) { jibTask ->
-                jibTask.inputs.dir(extension.jlinkJre)
+        if (project.pluginManager.hasPlugin("com.google.cloud.tools.jib")) {
+            listOf("jib", "jibDockerBuild", "jibBuildTar").forEach { jibTaskName ->
+                project.tasks.named(jibTaskName) { jibTask ->
+                    jibTask.inputs.dir(extension.jlinkJre)
+                }
             }
+        } else if (project.pluginManager.hasPlugin("tel.schich.tinyjib")) {
+            listOf("tinyJibPublish", "tinyJibDocker", "tinyJibTar").forEach { jibTaskName ->
+                project.tasks.named(jibTaskName) { jibTask ->
+                    jibTask.inputs.dir(extension.jlinkJre)
+                }
+            }
+        } else {
+            throw IllegalStateException("Should not be possible")
         }
 
         val jlinkJibPluginExtension = project.extensions.getByType(JlinkJibPluginExtension::class.java)
