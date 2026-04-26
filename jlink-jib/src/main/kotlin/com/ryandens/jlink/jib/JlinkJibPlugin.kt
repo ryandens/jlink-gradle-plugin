@@ -104,7 +104,6 @@ class JlinkJibPlugin :
         }
 
         val jlinkJibPluginExtension = project.extensions.getByType(JlinkJibPluginExtension::class.java)
-        jlinkJibPluginExtension.jrePosixFilePermissions
 
         // configure the jib extension
         val jibExtension: JibExtension? = project.extensions.findByType(JibExtension::class.java)
