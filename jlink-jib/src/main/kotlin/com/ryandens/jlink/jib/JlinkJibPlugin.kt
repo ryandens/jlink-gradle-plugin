@@ -16,6 +16,7 @@ import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import tel.schich.tinyjib.TinyJibExtension
 import java.nio.file.attribute.PosixFilePermission
 import java.util.Optional
 
@@ -106,7 +107,22 @@ class JlinkJibPlugin :
         val jlinkJibPluginExtension = project.extensions.getByType(JlinkJibPluginExtension::class.java)
 
         // configure the jib extension
-        val jibExtension: JibExtension? = project.extensions.findByType(JibExtension::class.java)
+        val tinyJibExtension: TinyJibExtension? = project.extensions.findByType(TinyJibExtension::class.java)
+
+        tinyJibExtension?.pluginExtensions {
+            extension {
+                extensionClass.set("com.ryandens.jlink.jib.JlinkJibPlugin")
+                extraConfiguration.set(
+                    Action<Configuration> { configuration ->
+                        configuration.jlinkJre.set(jlinkJibPluginExtension.jlinkJre)
+                        configuration.posixPermissions.set(jlinkJibPluginExtension.jrePosixFilePermissions)
+                    },
+                )
+            }
+        }
+
+        val jibExtension:
+            JibExtension? = project.extensions.findByType(JibExtension::class.java)
         jibExtension?.pluginExtensions { extensionParametersSpec ->
             extensionParametersSpec.pluginExtension { extension ->
                 extension.implementation = "com.ryandens.jlink.jib.JlinkJibPlugin"
