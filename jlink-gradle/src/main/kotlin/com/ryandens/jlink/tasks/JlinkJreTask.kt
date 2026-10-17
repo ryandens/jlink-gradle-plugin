@@ -8,7 +8,6 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.AbstractExecTask
 import org.gradle.api.tasks.CacheableTask
-import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Nested
@@ -74,12 +73,11 @@ abstract class JlinkJreTask : AbstractExecTask<JlinkJreTask> {
         modules.convention(listOf("java.base"))
         modulePath.convention(
             javaCompiler.map {
-                if (it.metadata.languageVersion.asInt() >= 24) {
-                    // on JDK 24 and up, no jmods dir is needed due to https://openjdk.org/jeps/493
-                    null
-                } else {
-                    it.metadata.installationPath.dir("jmods")
-                }
+                // JEP 493 allows JDKs without jmods, but ALL-MODULE-PATH still needs
+                // an explicit module path when packaged modules are available.
+                it.metadata.installationPath
+                    .dir("jmods")
+                    .takeIf { directory -> directory.asFile.isDirectory }
             },
         )
 
@@ -90,6 +88,13 @@ abstract class JlinkJreTask : AbstractExecTask<JlinkJreTask> {
     override fun exec() {
         if (compress.isPresent && zipCompress.isPresent) {
             throw GradleException("Only one of 'compress' or 'zipCompress' should be set.")
+        }
+        if ("ALL-MODULE-PATH" in modules.get() && !modulePath.isPresent) {
+            throw GradleException(
+                "ALL-MODULE-PATH requires an explicit module path. " +
+                    "Configure this task's modulePath to point to a directory containing modules, " +
+                    "or configure modules with explicit module names.",
+            )
         }
         setExecutable(
             javaCompiler

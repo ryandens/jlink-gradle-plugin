@@ -152,6 +152,12 @@ specify the modules you would like in your runtime. Note that this requires the 
 which java toolchain to use for accessing the jlink binary. Simply run the `jlinkJre` task to create the JRE in the 
 build directory of the project.
 
+The task uses the selected JDK's `jmods` directory as its default module path when that directory exists.
+Some JDK 24+ distributions omit `jmods` and support linking directly from the runtime image instead; use explicit
+module names such as `java.sql` with those distributions. `ALL-MODULE-PATH` requires an explicit path containing
+modules. To use it, select a JDK that includes `jmods`, or configure `modulePath` on the `JlinkJreTask` to point to
+a directory containing the modules you want to include.
+
 ```kotlin
 plugins {
   java
