@@ -26,7 +26,7 @@ jlink java binary rather than the java binary discovered relative on the host.
 ```kotlin
 plugins {
   application
-  id("com.ryandens.jlink-application") version "0.6.0"
+  id("com.ryandens.jlink-application") version "0.9.0"
 }
 
 java {
@@ -61,7 +61,7 @@ with the latest released image sha.
 plugins {
   application
   id("com.google.cloud.tools.jib") version "3.3.1"
-  id("com.ryandens.jlink-jib") version "0.6.0"
+  id("com.ryandens.jlink-jib") version "0.9.0"
 }
 
 java {
@@ -97,8 +97,8 @@ output as the source of the JRE that will be inserted into the container image.
 ```kotlin
 plugins {
   application
-  id("com.ryandens.jlink-jib") version "0.6.0"
-  id("com.ryandens.temurin-binaries-repository") version "0.6.0"
+  id("com.ryandens.jlink-jib") version "0.9.0"
+  id("com.ryandens.temurin-binaries-repository") version "0.9.0"
 }
 
 val jdk by configurations.creating {
@@ -161,7 +161,7 @@ a directory containing the modules you want to include.
 ```kotlin
 plugins {
   java
-  id("com.ryandens.jlink-jre") version "0.6.0"
+  id("com.ryandens.jlink-jre") version "0.9.0"
 }
 
 java {
@@ -201,3 +201,7 @@ tasks.register<JavaExec>("runOn11") {
 }
 
 ```
+
+## Releasing
+
+See [RELEASING.md](RELEASING.md) for versioning, release PRs, tag-triggered publication, and verification.

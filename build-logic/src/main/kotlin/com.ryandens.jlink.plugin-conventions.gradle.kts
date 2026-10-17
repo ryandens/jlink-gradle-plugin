@@ -44,9 +44,6 @@ gradlePlugin {
     vcsUrl.set("https://github.com/ryandens/jlink-gradle-plugin")
 }
 
-group = "com.ryandens"
-version = "0.8.0"
-
 spotless {
     kotlin {
         ktlint()
