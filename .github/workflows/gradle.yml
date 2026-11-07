@@ -19,6 +19,9 @@ jobs:
       matrix:
         platform: [ ubuntu-latest, windows-latest ]
     runs-on: ${{ matrix.platform }}
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-java@v6
@@ -36,6 +39,9 @@ jobs:
 
       - name: Setup TestLens
         uses: testlens-app/setup-testlens@v1
+        with:
+          use-oidc: true
+          github-token: ''
 
       - name: Execute Gradle build
         run: ./gradlew build
