@@ -5,8 +5,10 @@ plugins {
     alias(libs.plugins.spotless)
 }
 
-repositories {
-    gradlePluginPortal()
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(25))
+    }
 }
 
 tasks.compileJava {

@@ -10,11 +10,6 @@ plugins {
     id("com.diffplug.spotless")
 }
 
-repositories {
-    mavenCentral()
-    gradlePluginPortal()
-}
-
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(25))
@@ -56,6 +51,7 @@ spotless {
     }
 }
 
+// JvmTestSuite is incubating. It wires TestKit coverage into check; review on Gradle upgrades.
 testing {
     suites {
         // Configure the built-in test suite

@@ -7,6 +7,20 @@ plugins {
   id("com.gradle.common-custom-user-data-gradle-plugin") version "2.8.0"
 }
 
+dependencyResolutionManagement {
+  repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+  repositories {
+    mavenCentral()
+    exclusiveContent {
+      forRepository { gradlePluginPortal() }
+      filter {
+        includeGroup("com.google.cloud.tools.jib")
+        includeModule("com.google.cloud.tools", "jib-gradle-plugin")
+      }
+    }
+  }
+}
+
 rootProject.name = "jlink-gradle-plugin"
 include("jlink-gradle")
 include("jlink-jib")
